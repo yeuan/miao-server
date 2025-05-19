@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Http\Requests\Admin\Manager;
+namespace App\Http\Requests\Admin\Content;
 
+use App\Enums\Content\NoticeType;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
-use App\Models\Manager\Admin;
-use App\Models\Manager\AdminRole;
+use App\Models\Content\Notice;
 
-class AdminRequest extends BaseRequest
+class NoticeRequest extends BaseRequest
 {
     private string $table;
 
-    private string $tableRole;
+    private static $noticeColumns = null;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->table = (new Admin)->getTable();
-        $this->tableRole = (new AdminRole)->getTable();
+        $this->table = (new Notice)->getTable();
     }
 
     /**
@@ -43,10 +42,14 @@ class AdminRequest extends BaseRequest
     private function storeRules(): array
     {
         return [
-            'username' => 'bail|'.$this->alphaNumBetweenRule(config('custom.length.admin.username_min'), config('custom.length.admin.username_max'), true).'|'.$this->uniqueRule($this->table, 'username'),
-            'password' => array_merge(['bail'], $this->passwordRule(config('custom.length.admin.password_min'), config('custom.length.admin.password_max'), true)),
-            'role_id' => $this->intExistsUnlessRule($this->tableRole, 'id', true),
+            'type' => $this->enumRule(NoticeType::values(), true),
+            'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
+            'start_time' => $this->dateRule(),
+            'end_time' => $this->endDateRule('start_time'),
+            'flag' => $this->intRule(),
+            'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
+            'content' => $this->stringRule(),
         ];
     }
 
@@ -55,14 +58,16 @@ class AdminRequest extends BaseRequest
      */
     private function updateRules(): array
     {
-        $id = (int) $this->route('id');
-
         return [
             'id' => 'bail|'.$this->intRule(true),
-            'username' => 'bail|'.$this->alphaNumBetweenRule(config('custom.length.admin.username_min'), config('custom.length.admin.username_max'), true).'|'.$this->uniqueRule($this->table, 'username', $id),
-            'password' => array_merge(['bail'], $this->passwordRule(config('custom.length.admin.password_min'), config('custom.length.admin.password_max'), false)),
-            'role_id' => $this->intExistsUnlessRule($this->tableRole, 'id', true),
+            'type' => $this->enumRule(NoticeType::values(), true),
+            'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
+            'start_time' => $this->dateRule(),
+            'end_time' => $this->endDateRule('start_time'),
+            'flag' => $this->intRule(),
+            'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
+            'content' => $this->stringRule(),
         ];
     }
 
@@ -82,9 +87,9 @@ class AdminRequest extends BaseRequest
     private function indexRules(): array
     {
         return [
-            'username' => $this->alphaNumBetweenRule(config('custom.length.admin.username_min'), config('custom.length.admin.username_max')),
-            'role_id' => $this->intExistsUnlessRule($this->tableRole, 'id'),
+            'type' => $this->enumRule(NoticeType::values()),
             'status' => $this->enumRule(Status::values()),
+            // 'enable' => $this->enumRule(Status::values()),
             'sort_by' => $this->sortRule($this->getTableColumns($this->table)),
             'page' => $this->intRule(),
             'per_page' => $this->intWithMaxRule(config('custom.length.pagination.per_page_max')),
@@ -92,6 +97,8 @@ class AdminRequest extends BaseRequest
             'created_at_2' => $this->endDateRule('created_at_1'),
             'updated_at_1' => $this->dateRule(),
             'updated_at_2' => $this->endDateRule('updated_at_1'),
+            'publish_at_1' => $this->dateRule(),
+            'publish_at_2' => $this->endDateRule('publish_at_1'),
         ];
     }
 

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('name', 50)->default('')->comment('角色名稱')->unique();
             $table->json('allow_nav')->comment('導航權限');
-            $table->unsignedTinyInteger('status')->default(1)->comment('狀態 1:開啟 0:關閉');
+            $table->unsignedTinyInteger('status')->default(1)->comment('狀態 0:關閉 1:開啟');
             $table->string('created_by', 50)->default('')->comment('新增者');
             $table->string('updated_by', 50)->default('')->comment('更新者');
             $table->unsignedBigInteger('created_at')->default(0)->comment('建立時間');

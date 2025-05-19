@@ -15,6 +15,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::adminGroup('auth', 'Auth\AuthController', function () {
             Route::post('logout', 'logout')->name('logout');
         });
+
+        /* -- 系統管理 -- */
         // 管理者角色
         Route::adminGroup('admin_role', 'Manager\AdminRoleController', function () {
             Route::registerCrud('admin_role');
@@ -23,9 +25,19 @@ Route::group(['prefix' => 'v1'], function () {
         Route::adminGroup('admin', 'Manager\AdminController', function () {
             Route::registerCrud('admin');
         });
-        // 導航管理
+        // 導航
         Route::adminGroup('admin_nav', 'Manager\AdminNavController', function () {
             Route::registerCrud('admin_nav');
+        });
+
+        /* -- 內容管理 -- */
+        // 公告
+        Route::adminGroup('notice', 'Content\NoticeController', function () {
+            Route::registerCrud('notice');
+        });
+        // 輪播圖
+        Route::adminGroup('banner', 'Content\BannerController', function () {
+            Route::registerCrud('banner');
         });
     });
 });

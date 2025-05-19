@@ -118,7 +118,7 @@ if (! function_exists('requestOutParam')) {
     {
         $prefix = config('custom.setting.filter.out_parameters');
 
-        return request($prefix.$key, $default);
+        return request()->get($prefix.$key, $default);
     }
 }
 

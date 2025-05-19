@@ -6,6 +6,7 @@ use App\Enums\ApiCode;
 use App\Traits\RequestRulesTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 abstract class BaseRequest extends FormRequest
@@ -16,6 +17,9 @@ abstract class BaseRequest extends FormRequest
      * 是否合併 route 參數至驗證資料中
      */
     protected bool $mergeRouteParams = true;
+
+    // 靜態快取，不同表各自 cache
+    protected static array $schemaCache = [];
 
     /**
      * 各子類必須定義 rules
@@ -50,5 +54,17 @@ abstract class BaseRequest extends FormRequest
             ])
             ->response()
             ->throwResponse();
+    }
+
+    /**
+     * 取得指定資料表所有欄位，快取在 memory
+     */
+    protected function getTableColumns(string $table): array
+    {
+        if (! isset(self::$schemaCache[$table])) {
+            self::$schemaCache[$table] = Schema::getColumnListing($table);
+        }
+
+        return self::$schemaCache[$table];
     }
 }

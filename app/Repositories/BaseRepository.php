@@ -382,7 +382,7 @@ abstract class BaseRepository
      */
     public function create(array $data): int
     {
-        $operator = $data['created_by'] ?? request()->input(requestOutParam('username'));
+        $operator = $data['created_by'] ?? requestOutParam('username');
         $this->entity->createdBy && $data['created_by'] = $operator;
         $this->entity->updatedBy && $data['updated_by'] = $operator;
 
@@ -404,7 +404,7 @@ abstract class BaseRepository
      */
     public function update(array $data, int $id): void
     {
-        $operator = request()->input(requestOutParam('username'));
+        $operator = requestOutParam('username');
         $this->entity->updatedBy && $data['updated_by'] = $operator;
 
         if ($id == 0) {
@@ -457,7 +457,7 @@ abstract class BaseRepository
     private function shouldLogAction(): bool
     {
         return $this->isActionLog
-        && request()->input(requestOutParam('backstage', 0))
+        && requestOutParam('backstage', 0)
         && config('custom.log.save_admin_action_log', false);
     }
 

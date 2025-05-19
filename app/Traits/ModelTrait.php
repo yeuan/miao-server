@@ -24,7 +24,7 @@ trait ModelTrait
         return $this;
     }
 
-    private function changeTimeZone($dateString, $timeZoneSource = null, $timeZoneTarget = null): string
+    public function changeTimeZone($dateString, $timeZoneSource = null, $timeZoneTarget = null): string
     {
         $timeZoneSource = new \DateTimeZone($timeZoneSource ?: date_default_timezone_get());
         $timeZoneTarget = new \DateTimeZone($timeZoneTarget ?: date_default_timezone_get());

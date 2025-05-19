@@ -55,13 +55,13 @@ class AdminNavRepository extends BaseRepository
 
         // 附加其他條件（使用原生或特殊條件）
         if (isset($this->_search['ids'])) {
-            $query = $query->whereIn('id', $this->_search['ids']);
+            $query->whereIn('id', $this->_search['ids']);
         }
         if (isset($this->_search['flag'])) {
-            $query = $query->whereRaw('flag & ? > 0', [$this->_search['flag']]);
+            $query->whereRaw('flag & ? > 0', [$this->_search['flag']]);
         }
         if (isset($this->_search['route'])) {
-            $query = $query->whereRaw('FIND_IN_SET(?, route)', [$this->_search['route']]);
+            $query->whereRaw('FIND_IN_SET(?, route)', [$this->_search['route']]);
         }
 
         return $query;

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\ApiCode;
+use App\Enums\Content\NoticeType;
 use App\Enums\HttpStatus;
 use App\Enums\Manager\AdminNavFlag;
 use App\Enums\Status;
@@ -42,11 +43,28 @@ return [
         'PARAMS_ERROR' => '參數錯誤',
     ],
 
+    // 執行狀態
+    Success::class => [
+        'FAIL' => '失敗',
+        'SUCCESS' => '成功',
+    ],
+
     Status::class => [
         'DISABLE' => '停用',
         'ENABLE' => '啟用',
     ],
 
+    // 公告類型
+    NoticeType::class => [
+        'BACKEND' => '後台公告',
+        'AGENT' => '代理公告',
+        'SYSTEM' => '系統公告',
+        'SHOP' => '商城公告',
+        'PAYMENT' => '金流公告',
+        'GAME' => '遊戲公告',
+    ],
+
+    /* -- FLAG  -- */
     // 後台導航
     AdminNavFlag::class => [
         'ALLOW_BACKSTAGE' => '允許總後台',
@@ -56,9 +74,8 @@ return [
         'FINAL' => '最後一層',
     ],
 
-    // 執行狀態
-    Success::class => [
-        'FAIL' => '失敗',
-        'SUCCESS' => '成功',
+    // 公告
+    NoticeFlag::class => [
+        'ShowCash' => '顯示於現金版',
     ],
 ];

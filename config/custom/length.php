@@ -20,4 +20,7 @@ return [
         'route_max' => 255,
         'url_max' => 255,
     ],
+    'notice' => [
+        'title_max' => 50,
+    ],
 ];

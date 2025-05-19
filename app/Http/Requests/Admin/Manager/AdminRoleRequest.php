@@ -5,7 +5,6 @@ namespace App\Http\Requests\Admin\Manager;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Manager\AdminRole;
-use Illuminate\Support\Facades\Schema;
 
 class AdminRoleRequest extends BaseRequest
 {
@@ -79,7 +78,7 @@ class AdminRoleRequest extends BaseRequest
         return [
             'name' => $this->stringRule(config('custom.length.admin_role.name_max')),
             'status' => $this->enumRule(Status::values()),
-            'sort_by' => $this->sortRule(Schema::getColumnListing($this->table)),
+            'sort_by' => $this->sortRule($this->getTableColumns($this->table)),
             'page' => $this->intRule(),
             'per_page' => $this->intWithMaxRule(config('custom.length.pagination.per_page_max')),
             'created_at_1' => $this->dateRule(),

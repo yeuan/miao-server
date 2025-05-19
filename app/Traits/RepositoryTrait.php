@@ -17,4 +17,30 @@ trait RepositoryTrait
                 : $search["{$field}_2"]];
         }
     }
+
+    protected function applyPublishAtRange(array &$conditions, array $search): void
+    {
+        if (! empty($search['publish_at_1'])) {
+            $time = strlen($search['publish_at_1']) <= 10
+                ? $search['publish_at_1'].' 00:00:00'
+                : $search['publish_at_1'];
+
+            $conditions[] = ['start_time', '>=', strtotime($time)];
+        }
+
+        if (! empty($search['publish_at_2'])) {
+            $time = strlen($search['publish_at_2']) <= 10
+                ? $search['publish_at_2'].' 23:59:59'
+                : $search['publish_at_2'];
+
+            $conditions[] = ['end_time', '<=', strtotime($time)];
+        }
+    }
+
+    protected function applyEnableTimeFilter(array &$conditions): void
+    {
+        $now = time();
+        $conditions[] = ['start_time', '<=', $now];
+        $conditions[] = ['end_time', '>=', $now];
+    }
 }
