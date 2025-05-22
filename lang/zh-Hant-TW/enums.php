@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use App\Enums\ApiCode;
+use App\Enums\Content\BannerFlag;
+use App\Enums\Content\BannerLinkType;
+use App\Enums\Content\BannerType;
+use App\Enums\Content\NoticeFlag;
 use App\Enums\Content\NoticeType;
 use App\Enums\HttpStatus;
 use App\Enums\Manager\AdminNavFlag;
@@ -64,6 +68,25 @@ return [
         'GAME' => '遊戲公告',
     ],
 
+    // banner 類型
+    BannerType::class => [
+        'HOME' => '首頁輪播',
+        'LOGIN' => '登入頁',
+        'EVENT' => '活動頁',
+        'SHOP' => '商城專區',
+        'PAYMENT' => '金流專區',
+        'GAME' => '遊戲專區',
+        'MEMBER' => '會員中心',
+    ],
+    // banner 連結類型
+    BannerLinkType::class => [
+        'NONE' => '無',
+        'SAME_PAGE' => '同頁面',
+        'NEW_TAB' => '新分頁',
+        'MODULE' => '模組',
+        'GAME' => '遊戲',
+    ],
+
     /* -- FLAG  -- */
     // 後台導航
     AdminNavFlag::class => [
@@ -76,6 +99,15 @@ return [
 
     // 公告
     NoticeFlag::class => [
-        'ShowCash' => '顯示於現金版',
+        'TOP' => '置頂',
+        'HOMEPAGE' => '首頁顯示',
+        'MARQUEE' => '跑馬燈顯示',
+        'PUSH' => '推播',
+    ],
+
+    // banner
+    BannerFlag::class => [
+        'TOP' => '輪播優先',
+        'APP_ONLY' => '只在 App 顯示',
     ],
 ];

@@ -8,6 +8,8 @@ enum NoticeFlag: int
 {
     use EnumTrait;
 
-    // case ShowCash = 1 << 0;
-    // case ShowCredit = 1 << 1;
+    case TOP = 1 << 0; // 置頂
+    case HOMEPAGE = 1 << 1; // 首頁顯示
+    case MARQUEE = 1 << 2; // 跑馬燈顯示
+    case PUSH = 1 << 3; // 推播
 }

@@ -56,12 +56,21 @@ class AdminNavSeeder extends Seeder
                         ['name' => '刪除',  'route' => 'admin_nav.destroy', 'flag' => $allowBackstage | $final],
                     ],
                 ],
+                [
+                    'name' => '模組列表',
+                    'route' => 'modules.index',
+                    'flag' => $allowBackstage | $final,
+                    'children' => [
+                        ['name' => '修改',  'route' => 'modules.update',  'flag' => $allowBackstage | $final],
+                    ],
+                ],
             ],
             '網站管理' => [
                 [
                     'name' => '公告列表',
                     'route' => 'notice.index',
                     'flag' => $allowBackstage | $final,
+                    'module_code' => 'notice',
                     'children' => [
                         ['name' => '詳情',  'route' => 'notice.show',   'flag' => $allowBackstage | $final],
                         ['name' => '新增',  'route' => 'notice.store',   'flag' => $allowBackstage | $final],
@@ -73,6 +82,7 @@ class AdminNavSeeder extends Seeder
                     'name' => '輪播圖列表',
                     'route' => 'banner.index',
                     'flag' => $allowBackstage | $final,
+                    'module_code' => 'banner',
                     'children' => [
                         ['name' => '詳情',  'route' => 'banner.show',   'flag' => $allowBackstage | $final],
                         ['name' => '新增',  'route' => 'banner.store',   'flag' => $allowBackstage | $final],
@@ -88,14 +98,15 @@ class AdminNavSeeder extends Seeder
         $walk = function ($tree) use (&$walk, &$entries, &$id, $now, $by) {
             foreach ($tree as $groupName => $modules) {
                 $groupId = $id++;
-                $entries[] = $this->navRow($groupId, 0, '', $groupName, '', 0, $now, $by);
+                $entries[] = $this->navRow($groupId, 0, '', $groupName, '', 0, '', $now, $by);
 
                 foreach ($modules as $module) {
                     $moduleId = $id++;
-                    $entries[] = $this->navRow($moduleId, $groupId, "$groupId", $module['name'], $module['route'], $module['flag'], $now, $by);
+                    $moduleCode = $module['module_code'] ?? '';
+                    $entries[] = $this->navRow($moduleId, $groupId, "$groupId", $module['name'], $module['route'], $module['flag'], $moduleCode, $now, $by);
 
                     foreach ($module['children'] ?? [] as $child) {
-                        $entries[] = $this->navRow($id++, $moduleId, "$groupId-$moduleId", $child['name'], $child['route'], $child['flag'], $now, $by);
+                        $entries[] = $this->navRow($id++, $moduleId, "$groupId-$moduleId", $child['name'], $child['route'], $child['flag'], '', $now, $by);
                     }
                 }
             }
@@ -108,7 +119,7 @@ class AdminNavSeeder extends Seeder
         }
     }
 
-    private function navRow($id, $pid, $path, $name, $route, $flag, $now, $by): array
+    private function navRow($id, $pid, $path, $name, $route, $flag, $module_code, $now, $by): array
     {
         return [
             'id' => $id,
@@ -117,6 +128,7 @@ class AdminNavSeeder extends Seeder
             'name' => $name,
             'route' => $route,
             'flag' => $flag,
+            'module_code' => $module_code,
             'created_by' => $by,
             'updated_by' => $by,
             'created_at' => $now,

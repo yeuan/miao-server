@@ -203,6 +203,8 @@ enum UserStatus: string
 
     `**Http Code 除了 200 為成功外，其餘均為失敗。**`
 
-    -   status 為執行狀態 success => 成功，error => 失敗，failed => 錯誤。
+    -   success 為執行狀態 true => false => 失敗。
     -   message 回傳訊息。
-    -   code 為回傳代碼，下列顯示代碼表示的訊息。
+    -   code 為回傳代碼。
+    -   data 回傳的資料。
+    -   refer Enums相關資訊。

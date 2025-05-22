@@ -71,4 +71,22 @@ class AdminNavController extends Controller
             return respondError('SYSTEM_FAILED', $e);
         }
     }
+
+    public function sidebar()
+    {
+        try {
+            return respondSuccess($this->adminNavService->getSidebar());
+        } catch (\Throwable $e) {
+            return respondError('SYSTEM_FAILED', $e);
+        }
+    }
+
+    public function permission()
+    {
+        try {
+            return respondSuccess(requestOutParam('permission', []));
+        } catch (\Throwable $e) {
+            return respondError('SYSTEM_FAILED', $e);
+        }
+    }
 }

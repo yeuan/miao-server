@@ -4,9 +4,9 @@ namespace App\Models\Content;
 
 use App\Models\BaseModel;
 
-class Notice extends BaseModel
+class Banner extends BaseModel
 {
-    protected $table = 'notice';
+    protected $table = 'banner';
 
     protected $guarded = ['id'];
 }

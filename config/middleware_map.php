@@ -18,5 +18,6 @@ return [
         'jwt.refresh' => \App\Http\Middleware\JwtRefresh::class,
         'jwt.auth' => \App\Http\Middleware\JwtAuthenticate::class,
         'permission' => \App\Http\Middleware\Permission::class,
+        'module.enabled' => \App\Http\Middleware\EnsureModuleEnabled::class,
     ],
 ];

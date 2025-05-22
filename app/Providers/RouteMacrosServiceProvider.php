@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\System\ModuleRepository;
 use Closure;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -13,6 +14,8 @@ class RouteMacrosServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // --------- Macro 定義區 ---------
+
         /**
          * 通用 controller 群組註冊方法
          *
@@ -58,14 +61,51 @@ class RouteMacrosServiceProvider extends ServiceProvider
 
         /**
          * 標準 CRUD 路由（index, show, store, update, destroy）
-         * 用法：Route::registerCrud('admin')
+         * 用法：
+         *   Route::registerCrud('admin'); // 全部
+         *   Route::registerCrud('admin', ['index', 'update']); // 只要部分
          */
-        Route::macro('registerCrud', function (string $namePrefix) {
-            Route::get('/', 'index')->name("{$namePrefix}.index");
-            Route::get('/{id}', 'show')->name("{$namePrefix}.show");
-            Route::post('/', 'store')->name("{$namePrefix}.store");
-            Route::put('/{id}', 'update')->name("{$namePrefix}.update");
-            Route::delete('/{id}', 'destroy')->name("{$namePrefix}.destroy");
+        Route::macro('registerCrud', function (string $namePrefix, ?array $only = null) {
+            $map = [
+                'index' => ['get',    '/',      'index'],
+                'show' => ['get',    '/{id}',  'show'],
+                'store' => ['post',   '/',      'store'],
+                'update' => ['put',    '/{id}',  'update'],
+                'destroy' => ['delete', '/{id}',  'destroy'],
+            ];
+
+            $use = $only ? array_intersect_key($map, array_flip($only)) : $map;
+
+            foreach ($use as $action => [$method, $uri, $handler]) {
+                $route = Route::$method($uri, $handler)->name("$namePrefix.$action");
+                if (str_contains($uri, '{id}')) {
+                    $route->where('id', '[0-9]+');
+                }
+            }
         });
+
+        // --------- modules 動態 route 註冊區 ---------
+        Route::macro('adminModules', function () {
+            // 取得所有啟用中的模組
+            foreach (app(ModuleRepository::class)->getActiveModules() as $module) {
+                // 若 module 沒自訂 namespace/controller 就 fallback 為 Content
+                $namespace = $module['namespace'] ?? 'Content';
+                $controller = ucfirst($module['code']).'Controller';
+                $controllerPath = "{$namespace}\\{$controller}";
+
+                Route::adminGroup(
+                    $module['code'],
+                    $controllerPath,
+                    function () use ($module) {
+                        Route::registerCrud($module['code']);
+                    }
+                );
+            }
+        });
+
+        // 避免 migrate/queue 等 console 執行時載入 route
+        if ($this->app->runningInConsole()) {
+            return;
+        }
     }
 }

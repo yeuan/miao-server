@@ -25,20 +25,30 @@ Route::group(['prefix' => 'v1'], function () {
         Route::adminGroup('admin', 'Manager\AdminController', function () {
             Route::registerCrud('admin');
         });
-        // 導航
+        // 後台導航
         Route::adminGroup('admin_nav', 'Manager\AdminNavController', function () {
+            // 權限列表
+            Route::get('permission', 'permission')->name('permission');
+            // 取得後台導航
+            Route::get('sidebar', 'sidebar')->name('sidebar');
             Route::registerCrud('admin_nav');
         });
+        // 模組
+        Route::adminGroup('modules', 'System\ModulesController', function () {
+            Route::registerCrud('modules', ['index', 'update']);
+            // 取得所有啟用中的模組
+            Route::get('active', 'active')->name('modules.active');
+        });
 
-        /* -- 內容管理 -- */
-        // 公告
-        Route::adminGroup('notice', 'Content\NoticeController', function () {
-            Route::registerCrud('notice');
+        // 載入模組的路由
+        Route::adminModules();
+
+        // 模組啟動驗證（CRUD功能外用）
+        Route::middleware(['module.enabled'])->group(function () {
+            /* -- 內容管理 -- */
+
         });
-        // 輪播圖
-        Route::adminGroup('banner', 'Content\BannerController', function () {
-            Route::registerCrud('banner');
-        });
+
     });
 });
 // });

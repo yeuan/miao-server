@@ -4,6 +4,7 @@ use App\Http\Resources\ErrorResource;
 use App\Http\Resources\SuccessResource;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 if (! function_exists('respondSuccess')) {
@@ -28,7 +29,7 @@ if (! function_exists('respondCollection')) {
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    function respondCollection(array|LengthAwarePaginator|JsonResource $data, array $additional = []): JsonResource
+    function respondCollection(array|LengthAwarePaginator|JsonResource|Collection $data, array $additional = []): JsonResource
     {
         $resource = $data instanceof JsonResource
         ? $data

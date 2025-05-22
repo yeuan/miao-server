@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Manager;
 
+use App\Enums\Manager\AdminNavFlag;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Manager\AdminNav;
@@ -44,7 +45,7 @@ class AdminNavRequest extends BaseRequest
             'name' => 'bail|'.$this->stringRule(config('custom.length.admin_nav.name_max'), true).'|'.$this->uniqueRule($this->table),
             'route' => $this->stringRule(config('custom.length.admin_nav.route_max')),
             'url' => $this->urlRule(config('custom.length.admin_nav.url_max')),
-            'flag' => $this->intRule(),
+            'flag' => $this->flagRule(AdminNavFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
         ];
@@ -65,7 +66,7 @@ class AdminNavRequest extends BaseRequest
             'name' => 'bail|'.$this->stringRule(config('custom.length.admin_nav.name_max'), true).'|'.$this->uniqueRule($this->table, 'name', $id),
             'route' => $this->stringRule(config('custom.length.admin_nav.route_max')),
             'url' => $this->urlRule(config('custom.length.admin_nav.url_max')),
-            'flag' => $this->intRule(),
+            'flag' => $this->flagRule(AdminNavFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
         ];

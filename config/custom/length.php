@@ -20,7 +20,15 @@ return [
         'route_max' => 255,
         'url_max' => 255,
     ],
+    'modules' => [
+        'name_max' => 50,
+    ],
     'notice' => [
         'title_max' => 50,
+    ],
+    'banner' => [
+        'image_max' => 255,
+        'image_app_max' => 255,
+        'url_max' => 255,
     ],
 ];

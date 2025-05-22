@@ -56,4 +56,9 @@ class AdminNavService
     {
         $this->adminNavRepository->delete($id);
     }
+
+    public function getSidebar()
+    {
+        return $this->adminNavRepository->getNavTree(requestOutParam('backstage'));
+    }
 }

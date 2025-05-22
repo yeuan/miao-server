@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private $tableName = 'admin_nav';
+    private $tableName = 'notice';
 
     /**
      * Run the migrations.
@@ -19,15 +19,14 @@ return new class extends Migration
 
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('pid')->default(0)->comment('上層ID');
-            $table->string('path', 150)->default('')->comment('階層路徑');
-            $table->string('icon', 50)->default('')->comment('ICON');
-            $table->string('name', 50)->default('')->comment('導航名稱');
-            $table->string('module_code', 50)->default('')->comment('對應模組 code');
-            $table->string('route', 255)->default('')->comment('路由');
-            $table->string('url', 255)->default('')->comment('前端網址');
+            $table->unsignedTinyInteger('type')->default(1)->comment('公告類型');
+            $table->string('title', 50)->comment('公告標題');
+            $table->text('content')->comment('公告內容');
+            $table->unsignedBigInteger('start_time')->default(0)->comment('開始時間（UNIX timestamp）');
+            $table->unsignedBigInteger('end_time')->default(5000000000)->comment('結束時間（UNIX timestamp）');
             $table->unsignedInteger('flag')->default(0)->comment('旗標');
             $table->unsignedSmallInteger('sort')->default(0)->comment('排序');
+            $table->unsignedSmallInteger('type_sort')->default(0)->comment('類型排序');
             $table->unsignedTinyInteger('status')->default(1)->comment('狀態 0:關閉 1:開啟');
             $table->string('created_by', 50)->default('')->comment('新增者');
             $table->string('updated_by', 50)->default('')->comment('更新者');
@@ -35,12 +34,13 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_at')->default(0)->comment('更新時間');
 
             // 索引
-            $table->index(['pid', 'status'], 'pid_status_index');
-            $table->index(['module_code', 'status'], 'module_code_status_index');
-            $table->index(['flag', 'status'], 'flag_status_index');
+            $table->index(['type', 'status'], 'type_status_index');
+            $table->index(['type', 'status', 'flag'], 'type_status_flag_index');
+            $table->index(['type', 'status', 'start_time', 'end_time'], 'type_status_time_index');
+            $table->index(['type', 'type_sort'], 'type_type_sort_index');
         });
 
-        DB::statement("ALTER TABLE `$this->tableName` comment '導航列表'");
+        DB::statement("ALTER TABLE `$this->tableName` comment '公告表'");
     }
 
     /**

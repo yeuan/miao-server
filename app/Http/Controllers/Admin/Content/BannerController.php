@@ -48,7 +48,7 @@ class BannerController extends Controller
         }
     }
 
-    public function update(BannerRequest $request, $id)
+    public function update(BannerRequest $request)
     {
         try {
             $id = $request->validated('id');

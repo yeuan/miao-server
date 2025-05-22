@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Content;
 
+use App\Enums\Content\NoticeFlag;
 use App\Enums\Content\NoticeType;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
@@ -46,7 +47,7 @@ class NoticeRequest extends BaseRequest
             'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
-            'flag' => $this->intRule(),
+            'flag' => $this->flagRule(NoticeFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
             'content' => $this->stringRule(),
@@ -64,7 +65,7 @@ class NoticeRequest extends BaseRequest
             'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
-            'flag' => $this->intRule(),
+            'flag' => $this->flagRule(NoticeFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
             'content' => $this->stringRule(),
@@ -88,6 +89,7 @@ class NoticeRequest extends BaseRequest
     {
         return [
             'type' => $this->enumRule(NoticeType::values()),
+            'flag' => $this->flagRule(NoticeFlag::values()),
             'status' => $this->enumRule(Status::values()),
             // 'enable' => $this->enumRule(Status::values()),
             'sort_by' => $this->sortRule($this->getTableColumns($this->table)),

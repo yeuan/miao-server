@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin\Content;
 
-use App\Enums\Content\NoticeType;
+use App\Enums\Content\BannerFlag;
+use App\Enums\Content\BannerLinkType;
+use App\Enums\Content\BannerType;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Content\Banner;
@@ -42,14 +44,18 @@ class BannerRequest extends BaseRequest
     private function storeRules(): array
     {
         return [
-            'type' => $this->enumRule(NoticeType::values(), true),
-            'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
+            'type' => $this->enumRule(BannerType::values(), true),
+            'image' => $this->stringRule(config('custom.length.banner.image_max')),
+            'image_app' => $this->stringRule(config('custom.length.banner.image_app_max')),
+            'url' => $this->urlRule(config('custom.length.banner.url_max')),
+            'link_type' => $this->enumRule(BannerLinkType::values(), true),
+            'module_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value]),
+            'object_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value, BannerLinkType::GAME->value]),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
-            'flag' => $this->intRule(),
+            'flag' => $this->flagRule(BannerFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
-            'content' => $this->stringRule(),
         ];
     }
 
@@ -60,14 +66,18 @@ class BannerRequest extends BaseRequest
     {
         return [
             'id' => 'bail|'.$this->intRule(true),
-            'type' => $this->enumRule(NoticeType::values(), true),
-            'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
+            'type' => $this->enumRule(BannerType::values()),
+            'image' => $this->stringRule(config('custom.length.banner.image_max')),
+            'image_app' => $this->stringRule(config('custom.length.banner.image_app_max')),
+            'url' => $this->urlRule(config('custom.length.banner.url_max')),
+            'link_type' => $this->enumRule(BannerLinkType::values()),
+            'module_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value]),
+            'object_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value, BannerLinkType::GAME->value]),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
-            'flag' => $this->intRule(),
+            'flag' => $this->flagRule(BannerFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
-            'content' => $this->stringRule(),
         ];
     }
 
@@ -87,7 +97,8 @@ class BannerRequest extends BaseRequest
     private function indexRules(): array
     {
         return [
-            'type' => $this->enumRule(NoticeType::values()),
+            'type' => $this->enumRule(BannerType::values()),
+            'flag' => $this->enumRule(BannerFlag::values()),
             'status' => $this->enumRule(Status::values()),
             // 'enable' => $this->enumRule(Status::values()),
             'sort_by' => $this->sortRule($this->getTableColumns($this->table)),

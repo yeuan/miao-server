@@ -52,6 +52,20 @@ trait RequestRulesTrait
     }
 
     /**
+     * 驗證Flag欄位
+     */
+    protected function flagRule(array $allow, bool $required = false): array
+    {
+        $rules = [
+            $this->requiredRule($required),
+            'array',
+        ];
+        $rules['*.'] = 'in:'.implode(',', $allow);
+
+        return $rules;
+    }
+
+    /**
      * 驗證一般字串欄位（包含最大長度與是否 required）
      */
     protected function stringRule(int $max = 0, bool $required = false): string
@@ -167,5 +181,13 @@ trait RequestRulesTrait
     private function requiredRule(bool $required = false): string
     {
         return $required ? 'required' : 'nullable';
+    }
+
+    /**
+     * 依照指定欄位值條件，判斷本欄位必填
+     */
+    protected function requiredIfRule(string $field, array $values): string
+    {
+        return 'required_if:'.$field.','.implode(',', $values);
     }
 }

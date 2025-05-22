@@ -6,6 +6,7 @@ use App\Enums\Manager\AdminNavFlag;
 use App\Enums\Status;
 use App\Models\Manager\AdminNav;
 use App\Repositories\BaseRepository;
+use App\Repositories\System\ModuleRepository;
 
 class AdminNavRepository extends BaseRepository
 {
@@ -68,6 +69,28 @@ class AdminNavRepository extends BaseRepository
     }
 
     /**
+     * 取得導航樹狀結構
+     */
+    public function getNavTree(int $backstage): array
+    {
+        $nav = $this->allNav($backstage, requestOutParam('allow_nav_ids'));
+        // ==== 模組過濾 ====
+        // 取得啟用 module code 陣列
+        $activeModuleCodes = app(ModuleRepository::class)->getAllModuleCodes(Status::ENABLE->value);
+        // 過濾掉未啟用的 nav
+        $nav = array_filter($nav, function ($row) use ($activeModuleCodes) {
+            // 如果沒有模組綁定直接顯示，有綁才做判斷
+            if (empty($row['module_code'])) {
+                return true;
+            }
+
+            return in_array($row['module_code'], $activeModuleCodes);
+        });
+
+        return $this->treeNav($nav);
+    }
+
+    /**
      * 取得所有導航資料
      *
      * @param  string  $backstage  後台類型
@@ -84,6 +107,7 @@ class AdminNavRepository extends BaseRepository
             'pid',
             'icon',
             'name',
+            'module_code',
             'route',
             'url',
             'flag',

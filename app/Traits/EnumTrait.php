@@ -39,6 +39,15 @@ trait EnumTrait
         return array_column(self::cases(), 'value');
     }
 
+    /**
+     * 取得所有 case 的 name 陣列
+     * ex: ['TOP', 'HOMEPAGE', 'MARQUEE', ...]
+     */
+    public static function names(): array
+    {
+        return array_column(static::cases(), 'name');
+    }
+
     public static function toArray(): array
     {
         return array_combine(
