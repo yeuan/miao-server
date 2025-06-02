@@ -29,7 +29,7 @@ return new class extends Migration
 
         $this->schema->create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedTinyInteger('backstage')->default(1)->comment('後台類型 1:總後台 2:代理後台');
+            $table->unsignedTinyInteger('backstage')->default(1)->comment('後台類型 1:總後台 2:代理後台 3:多租客後台');
             $table->unsignedInteger('admin_id')->default(0)->comment('管理者ID');
             $table->string('ip', 45)->default('')->comment('登入IP');
             $table->json('ip_info')->comment('IP資訊');

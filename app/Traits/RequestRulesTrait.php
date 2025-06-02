@@ -74,6 +74,14 @@ trait RequestRulesTrait
     }
 
     /**
+     * 驗證字串欄位內容是否存在於允許清單中（string + in 檢查，適用如 module_code、狀態標籤等）
+     */
+    protected function stringInRule(array $allowed, bool $required = false): string
+    {
+        return $this->requiredRule($required).'|string|in:'.implode(',', $allowed);
+    }
+
+    /**
      * 驗證唯一欄位（可指定忽略某筆 ID）
      */
     protected function uniqueRule(string $table, string $column = 'name', ?string $ignoreId = null): string
@@ -81,6 +89,19 @@ trait RequestRulesTrait
         $rule = "unique:{$table},{$column}";
         if ($ignoreId) {
             $rule .= ",{$ignoreId}";
+        }
+
+        return $rule;
+    }
+
+    /**
+     * 驗證資料是否存在於指定資料表欄位中
+     */
+    protected function existsRule(string $table, string $column = 'id', ?int $ignoreId = null): string
+    {
+        $rule = "exists:{$table},{$column}";
+        if ($ignoreId) {
+            $rule .= "|exclude_if:{$column},{$ignoreId}";
         }
 
         return $rule;
@@ -173,6 +194,14 @@ trait RequestRulesTrait
             'string',                        // 確保是字串格式
             new SortByRule($allowedColumns), // 自訂的排序規則物件
         ];
+    }
+
+    /**
+     * 驗證檔案欄位，指定副檔名、大小
+     */
+    protected function fileRule(array $extensions, int $maxSize, bool $required = false): string
+    {
+        return $this->requiredRule($required).'|file|mimes:'.implode(',', $extensions).'|max:'.$maxSize;
     }
 
     /**

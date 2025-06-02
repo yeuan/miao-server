@@ -99,7 +99,7 @@ if (! function_exists('filterRequest')) {
         return collect($request)
             ->reject(function ($value, $key) {
                 // 過濾掉不需要的參數
-                return strpos($key, config('custom.setting.filter.out_parameters')) !== false;
+                return strpos($key, config('custom.settings.filter.out_parameters')) !== false;
             })
             ->map(function ($value) {
                 // 將 null 值轉換為空字串
@@ -116,7 +116,7 @@ if (! function_exists('requestOutParam')) {
      */
     function requestOutParam(string $key, mixed $default = ''): mixed
     {
-        $prefix = config('custom.setting.filter.out_parameters');
+        $prefix = config('custom.settings.filter.out_parameters');
 
         return request()->get($prefix.$key, $default);
     }
@@ -129,7 +129,7 @@ if (! function_exists('requestOutParamPrefix')) {
      */
     function requestOutParamPrefix(string $key): string
     {
-        $prefix = config('custom.setting.filter.out_parameters');
+        $prefix = config('custom.settings.filter.out_parameters');
 
         return $prefix.$key;
     }

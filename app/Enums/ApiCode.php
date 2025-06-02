@@ -15,6 +15,8 @@ enum ApiCode: int
 
     // 資料查詢
     case RESOURCE_NOT_FOUND = 40400;
+    // 上傳失敗
+    case UPLOAD_SAVE_FAILED = 40401;
     // 參數驗證
     case VALIDATION_PARAMS_INVALID = 42201;
     case VALIDATION_CAPTCHA_ERROR = 42202;

@@ -65,7 +65,7 @@ class AdminNavSeeder extends Seeder
                     ],
                 ],
             ],
-            '網站管理' => [
+            '內容管理' => [
                 [
                     'name' => '公告列表',
                     'route' => 'notice.index',
@@ -88,6 +88,18 @@ class AdminNavSeeder extends Seeder
                         ['name' => '新增',  'route' => 'banner.store',   'flag' => $allowBackstage | $final],
                         ['name' => '修改',  'route' => 'banner.update',  'flag' => $allowBackstage | $final],
                         ['name' => '刪除',  'route' => 'banner.destroy', 'flag' => $allowBackstage | $final],
+                    ],
+                ],
+            ],
+            '系統設定' => [
+                [
+                    'name' => '上傳設置',
+                    'route' => 'upload_settings.index',
+                    'flag' => $allowBackstage | $final,
+                    'children' => [
+                        ['name' => '詳情',  'route' => 'upload_settings.show',   'flag' => $allowBackstage | $final],
+                        ['name' => '修改',  'route' => 'upload_settings.update',  'flag' => $allowBackstage | $final],
+                        ['name' => '圖片上傳',  'route' => 'upload.image',   'flag' => $allowBackstage | $final],
                     ],
                 ],
             ],

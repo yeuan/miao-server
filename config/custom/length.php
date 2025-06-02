@@ -31,4 +31,11 @@ return [
         'image_app_max' => 255,
         'url_max' => 255,
     ],
+    'upload' => [
+        'owner_field_max' => 50,
+    ],
+    'upload_settings' => [
+        'thumb_width_max' => 1500,
+        'thumb_height_max' => 1500,
+    ],
 ];

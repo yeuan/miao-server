@@ -6,7 +6,6 @@ use App\Enums\Manager\AdminNavFlag;
 use App\Enums\Status;
 use App\Models\Manager\AdminNav;
 use App\Repositories\BaseRepository;
-use App\Repositories\System\ModuleRepository;
 
 class AdminNavRepository extends BaseRepository
 {

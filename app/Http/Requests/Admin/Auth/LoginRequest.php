@@ -24,7 +24,7 @@ class LoginRequest extends BaseRequest
         ];
 
         // 驗證碼啟用設定
-        if (config('custom.setting.verification.use_admin_login_validate', false)) {
+        if (config('custom.settings.verification.use_admin_login_validate', false)) {
             if ($field = getVerificationField()) {
                 $rules[$field] = 'bail|'.$this->stringRule(0, true);
             }

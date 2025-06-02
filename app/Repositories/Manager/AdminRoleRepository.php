@@ -36,7 +36,7 @@ class AdminRoleRepository extends BaseRepository
         return $query->where($conditions);
     }
 
-    public function getRoleList(bool $all = false)
+    public function getRoleList(bool $all = false): array
     {
         $where = [];
         if (! $all) {

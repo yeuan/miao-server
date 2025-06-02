@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Status;
-use App\Repositories\System\ModuleRepository;
+use App\Repositories\Manager\ModuleRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

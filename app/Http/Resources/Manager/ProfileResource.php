@@ -19,7 +19,7 @@ class ProfileResource extends SuccessResource
             'status' => $this->status,
             'token' => $this->token,
             'backstage' => $this->backstage ?? requestOutParam('backstage'),
-            'created_at' => (string) $this->created_at,
+            'created_at' => $this->created_at,
         ];
     }
 }

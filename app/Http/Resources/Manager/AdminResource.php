@@ -17,10 +17,10 @@ class AdminResource extends SuccessResource
             'login_time' => $this->formatDateTime($this->login_time),
             'login_count' => $this->login_count,
             'status' => $this->status,
-            'created_at' => (string) $this->created_at,
             'created_by' => $this->created_by,
-            'updated_at' => (string) $this->updated_at,
             'updated_by' => $this->updated_by,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

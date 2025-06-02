@@ -153,14 +153,14 @@ abstract class BaseRepository
         return $this;
     }
 
-    public function group(array ...$data): self
+    public function group(string ...$data): self
     {
         $this->_group = $data;
 
         return $this;
     }
 
-    public function having(array ...$data): self
+    public function having(string ...$data): self
     {
         $this->_having = $data;
 
@@ -302,22 +302,22 @@ abstract class BaseRepository
 
     }
 
-    public function row(int|string $id, int $lock = 0): Model
+    public function row(int|string $id, int $lock = 0, bool $throw = true): Model
     {
         $this->_doAction();
 
         $query = $this->db->where($this->entity->getKeyName(), $id);
 
         $row = match ($lock) {
-            1 => $query->lockForUpdate()->firstOrFail(),
-            2 => $query->sharedLock()->firstOrFail(),
-            default => $query->firstOrFail(),
+            1 => $throw ? $query->lockForUpdate()->firstOrFail() : $query->lockForUpdate()->first(),
+            2 => $throw ? $query->sharedLock()->firstOrFail() : $query->sharedLock()->first(),
+            default => $throw ? $query->firstOrFail() : $query->first(),
         };
 
         return tap($row, fn () => $this->reset()); // 查完自動 reset
     }
 
-    public function rowArray(int|string $id): array
+    public function rowArray(int|string $id, int $lock = 0): array
     {
         $cacheGroup = $this->entity->getTable();
         $cacheKey = $cacheGroup.':id:'.$id;
@@ -326,7 +326,8 @@ abstract class BaseRepository
             return json_decode($cache, true);
         }
 
-        $row = $this->row($id)->toArray(); // findOrFail() 已會拋錯
+        $row = $this->row($id, $lock, false);
+        $row = filled($row) ? $row->toArray() : [];
 
         $this->redisCache && $this->storeCacheWithTrack($cacheGroup, $cacheKey, $row);
 
@@ -346,7 +347,7 @@ abstract class BaseRepository
         return tap($result, fn () => $this->reset());
     }
 
-    public function resultArray()
+    public function resultArray(): array
     {
         $cacheGroup = $this->entity->getTable();
         $cacheKey = $cacheGroup.':'.$this->getCompiledSelect(false);
@@ -364,17 +365,36 @@ abstract class BaseRepository
         return $result;
     }
 
-    public function resultOne($lock = 0): ?Model
+    public function resultOne(int $lock = 0, bool $throw = true): ?Model
     {
         $this->_doAction();
 
         $row = match ($lock) {
-            1 => $this->db->lockForUpdate()->firstOrFail(),
-            2 => $this->db->sharedLock()->firstOrFail(),
-            default => $this->db->first()->firstOrFail(),
+            1 => $throw ? $this->db->lockForUpdate()->firstOrFail() : $this->db->lockForUpdate()->first(),
+            2 => $throw ? $this->db->sharedLock()->firstOrFail() : $this->db->sharedLock()->first(),
+            default => $throw ? $this->db->firstOrFail() : $this->db->first(),
         };
 
         return tap($row, fn () => $this->reset()); // 查完自動 reset
+    }
+
+    public function resultOneArray(int $lock = 0): array
+    {
+        $cacheGroup = $this->entity->getTable();
+        $cacheKey = $cacheGroup.':'.$this->getCompiledSelect(false).':one';
+
+        if ($this->redisCache && ($row = $this->getCache($cacheKey))) {
+            $this->reset();
+
+            return json_decode($row, true);
+        }
+
+        $model = $this->resultOne($lock, false);
+        $row = $model ? $model->toArray() : [];
+
+        $this->redisCache && $this->storeCacheWithTrack($cacheGroup, $cacheKey, $row);
+
+        return $row;
     }
 
     /**
@@ -430,6 +450,58 @@ abstract class BaseRepository
         if ($this->shouldLogAction()) {
             $this->logAction($filteredRow, $changedFields);
         }
+    }
+
+    /**
+     * 批量更新
+     */
+    public function updateBatch(array $multipleData, int $chunkSize = 1000, string $referenceColumn = 'id'): int
+    {
+        if (empty($multipleData)) {
+            return 0;
+        }
+
+        $affectedRows = 0;
+        $database = $this->entity->getConnection()->getDatabaseName();
+        $table = $this->entity->getTable();
+        $fullTable = "`{$database}`.`{$table}`";
+
+        foreach (array_chunk($multipleData, $chunkSize) as $chunk) {
+            $firstRow = $chunk[0];
+            $updateColumns = array_keys($firstRow);
+
+            // 預設用 id，否則用第一欄
+            $refCol = isset($firstRow[$referenceColumn]) ? $referenceColumn : $updateColumns[0];
+
+            // 動態生成 SQL
+            $setSqlArr = [];
+            $bindings = [];
+            foreach ($updateColumns as $col) {
+                if ($col === $refCol) {
+                    continue;
+                }
+                $case = "`$col` = CASE ";
+                foreach ($chunk as $row) {
+                    $case .= "WHEN `$refCol` = ? THEN ? ";
+                    $bindings[] = $row[$refCol];
+                    $bindings[] = $row[$col];
+                }
+                $case .= "ELSE `$col` END";
+                $setSqlArr[] = $case;
+            }
+
+            $whereIn = array_column($chunk, $refCol);
+            $bindings = array_merge($bindings, $whereIn);
+            $whereInStr = rtrim(str_repeat('?,', count($whereIn)), ',');
+            $sql = "UPDATE {$fullTable} SET ".implode(', ', $setSqlArr)." WHERE `$refCol` IN ($whereInStr)";
+
+            $affectedRows += DB::update($sql, $bindings);
+        }
+
+        // 更新後刪除Redis快取
+        $this->flushTableCache($table);
+
+        return $affectedRows;
     }
 
     public function delete(int|string $id = 0): void
@@ -488,7 +560,7 @@ abstract class BaseRepository
             'created_by' => requestOutParam('username'),
         ];
 
-        if (config('custom.setting.queue.use_redis', false)) {
+        if (config('custom.settings.queue.use_redis', false)) {
             dispatch(new LogApiJob(collect($log)))->onQueue('logWorker');
         } else {
             (new LogApiJob(collect($log)))->handle();

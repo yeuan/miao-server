@@ -2,6 +2,7 @@
 
 namespace App\Models\Manager;
 
+use App\Casts\DateTimeCast;
 use App\Traits\ModelTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -18,6 +19,11 @@ class Admin extends Authenticatable implements JWTSubject
 
     protected $hidden = [
         'password',
+    ];
+
+    protected $casts = [
+        'created_at' => DateTimeCast::class,
+        'updated_at' => DateTimeCast::class,
     ];
 
     public function role()

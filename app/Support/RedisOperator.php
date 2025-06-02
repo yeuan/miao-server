@@ -21,7 +21,7 @@ class RedisOperator
             $this->redis->ping();
         } catch (\Throwable $e) {
             $this->redis = Redis::connection($connectionName);
-            Log::channel('single')->info(
+            Log::channel('redis')->info(
                 now()->toDateTimeString().": 斷線重連 / Redis reconnect triggered ({$connectionName})!"
             );
         }

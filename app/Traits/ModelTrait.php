@@ -4,16 +4,6 @@ namespace App\Traits;
 
 trait ModelTrait
 {
-    public function getCreatedAtAttribute($rawTime): string
-    {
-        return $this->changeTimeZone($rawTime, '', config('app.timezone'));
-    }
-
-    public function getUpdatedAtAttribute($rawTime): string
-    {
-        return $this->changeTimeZone($rawTime, '', config('app.timezone'));
-    }
-
     /**
      * 一次設多個屬性（不會存進資料庫）
      */
@@ -24,17 +14,37 @@ trait ModelTrait
         return $this;
     }
 
-    public function changeTimeZone($dateString, $timeZoneSource = null, $timeZoneTarget = null): string
+    /**
+     * 取得上傳欄位
+     */
+    public function getUploadFields(): array
     {
-        $timeZoneSource = new \DateTimeZone($timeZoneSource ?: date_default_timezone_get());
-        $timeZoneTarget = new \DateTimeZone($timeZoneTarget ?: date_default_timezone_get());
+        return property_exists($this, 'uploadFields') ? $this->uploadFields : [];
+    }
 
-        $dateTime = is_numeric($dateString)
-        ? (new \DateTime('@'.$dateString))->setTimezone($timeZoneSource)
-        : new \DateTime($dateString, $timeZoneSource);
+    /**
+     * 動態取得 casts（支援 baseCasts 與 uploadFields 自動補 cast）
+     */
+    public function getCasts(): array
+    {
+        // 先取得原有 casts（父層、子層合併）
+        $casts = property_exists($this, 'casts') ? $this->casts : [];
 
-        $dateTime->setTimezone($timeZoneTarget);
+        // 取得 baseCasts，如果有的話（選擇性）
+        if (property_exists($this, 'baseCasts')) {
+            $casts = array_merge($this->baseCasts, $casts);
+        }
 
-        return $dateTime->format(config('custom.default.datetime', 'Y-m-d H:i:s'));
+        // 自動加上 uploadFields
+        if (property_exists($this, 'uploadFields') && is_array($this->uploadFields)) {
+            foreach ($this->uploadFields as $field) {
+                // 子類已經覆寫就不再補
+                if (! array_key_exists($field, $casts)) {
+                    $casts[$field] = \App\Casts\UploadCast::class;
+                }
+            }
+        }
+
+        return $casts;
     }
 }

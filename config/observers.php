@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'Log\LogAdminLogin' => \App\Observers\Auth\GrabIpInfoObserver::class,
-    'Manager\Admin' => \App\Observers\Auth\AuthObserver::class,
-    'Content\Notice' => \App\Observers\Content\NoticeObserver::class,
+    'Log\LogAdminLogin' => [\App\Observers\Auth\GrabIpInfoObserver::class],
+    'Log\LogUpload' => [\App\Observers\System\UploadObserver::class],
+    'Manager\Admin' => [\App\Observers\Auth\AuthObserver::class],
+    'Content\Notice' => [\App\Observers\Content\NoticeObserver::class],
+    'Content\Banner' => [\App\Observers\System\AttachUploadObserver::class],
 ];

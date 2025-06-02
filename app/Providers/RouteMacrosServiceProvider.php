@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Repositories\System\ModuleRepository;
+use App\Repositories\Manager\ModuleRepository;
 use Closure;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;

@@ -59,7 +59,7 @@ class AuthObserver
         $log['db'] = 'admin_login';
         $log['ip'] = getRealIp();
 
-        if (config('custom.setting.queue.use_redis')) {
+        if (config('custom.settings.queue.use_redis')) {
             dispatch(new LogApiJob(collect($log)))->onQueue('logWorker');
         } else {
             (new LogApiJob(collect($log)))->handle();

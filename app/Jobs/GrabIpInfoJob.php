@@ -7,6 +7,8 @@ use App\Repositories\Log\LogUserLoginRepository;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GrabIpInfoJob implements ShouldBeUnique, ShouldQueue
 {
@@ -20,7 +22,7 @@ class GrabIpInfoJob implements ShouldBeUnique, ShouldQueue
         protected int $id,
         protected ?int $uniqueFor = null // 預設值為 null
     ) {
-        $this->uniqueFor = config('custom.setting.queue.unique_lock_time', 300);
+        $this->uniqueFor = config('custom.settings.queue.unique_lock_time', 300);
     }
 
     /**
@@ -48,10 +50,28 @@ class GrabIpInfoJob implements ShouldBeUnique, ShouldQueue
         }
 
         // 呼叫 IP 資訊 API
-        $url = config('custom.setting.network.ipdata_url').$data['ip'].'?lang=zh-CN';
-        $ipInfo = getCurl($url, false);
-        $data['ip_info'] = json_decode($ipInfo ?? '[]', true);
+        $url = config('custom.settings.network.ipdata_url').$data['ip'].'?lang=zh-CN';
+        $timeout = config('custom.settings.network.timeout', 10);
+        try {
+            $response = Http::timeout($timeout)->get($url);
+            $result = $response->successful();
 
+            if (! $result) {
+                Log::channel('grabIpInfo')->warning('取得ip資訊錯誤! / Error retrieving IP information!', [
+                    'url' => $url,
+                    'response' => $response->body(),
+                ]);
+
+                // throw new \Exception('Fail retrieving IP information!'); // 視情況要不要 throw, 拋出job才會重新執行
+            }
+
+            $ipInfo = $result ? $response->json() : [];
+        } catch (\Throwable $e) {
+            Log::channel('grabIpInfo')->error('取得ip資訊錯誤: / Error retrieving IP information: '.$e->getMessage());
+            $ipInfo = [];
+        }
+
+        $data['ip_info'] = json_decode($ipInfo ?? '[]', true);
         // 儲存資料
         $data->save();
     }

@@ -19,9 +19,9 @@ class AuthService
     protected const LOGIN_CONTEXTS = [
         'admin' => [
             'backstage' => Backstage::ADMIN,
-            'rateLimitConfig' => 'custom.setting.rate_limit.admin',
+            'rateLimitConfig' => 'custom.settings.rate_limit.admin',
             'disableStatus' => AdminStatus::DISABLE,
-            'useValidate' => 'custom.setting.verification.use_admin_login_validate',
+            'useValidate' => 'custom.settings.verification.use_admin_login_validate',
             'repository' => 'adminRepository',
         ],
         // 'agent' => [...]
@@ -63,7 +63,7 @@ class AuthService
         }
 
         // 判斷登入模式
-        $isMultiLogin = config("custom.setting.login_mode.{$scene}") === 'multi';
+        $isMultiLogin = config("custom.settings.login_mode.{$scene}") === 'multi';
         $deviceId = $isMultiLogin ? (string) Str::uuid() : null;
 
         // 嘗試登入
@@ -113,7 +113,7 @@ class AuthService
         auth()->logout();
 
         // 依設定檔決定是否要登出所有裝置
-        $allDevices = config("custom.setting.logout_mode.{$scene}", false);
+        $allDevices = config("custom.settings.logout_mode.{$scene}", false);
 
         TokenManager::make($scene, $deviceId)->remove($userId, $allDevices);
     }

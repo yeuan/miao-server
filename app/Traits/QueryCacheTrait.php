@@ -30,7 +30,7 @@ trait QueryCacheTrait
             return;
         }
 
-        $ttl = (int) config('custom.setting.cache.ttl_time');
+        $ttl = (int) config('custom.settings.cache.ttl_time');
         $this->redis()->set($key, json_encode($value, 320), $ttl);
         $this->redis()->sadd($this->getTrackedCacheSetKey($group), $key);
     }

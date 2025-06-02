@@ -10,8 +10,11 @@ use App\Enums\Content\NoticeFlag;
 use App\Enums\Content\NoticeType;
 use App\Enums\HttpStatus;
 use App\Enums\Manager\AdminNavFlag;
+use App\Enums\RecordStatus;
 use App\Enums\Status;
 use App\Enums\Success;
+use App\Enums\System\ThumbMode;
+use App\Enums\System\UploadType;
 
 return [
     // 通用
@@ -58,6 +61,16 @@ return [
         'ENABLE' => '啟用',
     ],
 
+    RecordStatus::class => [
+        'PENDING' => '待處理',
+        'ACTIVE' => '啟用',
+        'DISABLED' => '停用',
+        'DELETED' => '已刪除',
+        'ARCHIVED' => '已封存',
+        'REJECTED' => '審核未通過',
+        'EXPIRED' => '已過期',
+    ],
+
     // 公告類型
     NoticeType::class => [
         'BACKEND' => '後台公告',
@@ -85,6 +98,22 @@ return [
         'NEW_TAB' => '新分頁',
         'MODULE' => '模組',
         'GAME' => '遊戲',
+    ],
+
+    // 上傳類型
+    UploadType::class => [
+        'IMAGE' => '圖片',
+        'FILE' => '檔案',
+        // 'VIDEO' => '影片',
+        // 'AUDIO' => '音訊',
+        // 'DOCUMENT' => '文件',
+    ],
+    // 縮圖類型
+    ThumbMode::class => [
+        'COVER' => '滿版裁切',
+        'CONTAIN' => '留白縮放',
+        'STRETCH' => '強制拉伸',
+        'FIT' => '等比縮放',
     ],
 
     /* -- FLAG  -- */

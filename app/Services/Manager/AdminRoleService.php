@@ -28,7 +28,7 @@ class AdminRoleService
 
     public function store(array $row): void
     {
-        // 過濾參數
+        // 過濾參數uploadSettingService
         $row = filterRequest($row);
         $row['allow_nav'] = is_array($row['allow_nav']) ? $row['allow_nav'] : json_decode($row['allow_nav'], true);
         $this->adminRoleRepository->create($row);

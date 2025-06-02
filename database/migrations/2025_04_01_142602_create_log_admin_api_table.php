@@ -38,8 +38,6 @@ return new class extends Migration
             $table->json('headers')->nullable()->comment('標頭');
             $table->json('response')->nullable()->comment('回傳參數');
             if ($this->dbType === 'mysql') {
-                $this->db->statement("ALTER TABLE `$this->tableName` comment '輪播圖'");
-
                 $table->boolean('success')->virtualAs("JSON_VALUE(response, '$.success')")->comment('呼叫結果');
                 $table->unsignedSmallInteger('code')->virtualAs("JSON_VALUE(response, '$.code')")->comment('回傳code');
             } elseif ($this->dbType === 'mariadb') {

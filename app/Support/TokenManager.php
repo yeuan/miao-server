@@ -27,7 +27,7 @@ class TokenManager
      */
     protected function buildKey(int|string $userId, string $type): string
     {
-        $mode = config("custom.setting.login_mode.{$this->scene}", 'single');
+        $mode = config("custom.settings.login_mode.{$this->scene}", 'single');
 
         if ($mode === 'multi') {
             if (empty($this->deviceId)) {

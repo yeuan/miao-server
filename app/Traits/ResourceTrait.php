@@ -128,7 +128,7 @@ trait ResourceTrait
 
     private function logAction(array $log): void
     {
-        if (config('custom.setting.queue.use_redis')) {
+        if (config('custom.settings.queue.use_redis')) {
             dispatch(new LogApiJob(collect($log)))->onQueue('logWorker');
         } else {
             (new LogApiJob(collect($log)))->handle();

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AdminNavSeeder::class,
             AdminRoleSeeder::class,
             AdminSeeder::class,
+            UploadSettingsSeeder::class,
         ]);
     }
 }

@@ -127,6 +127,38 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        // 自訂channel
+        'redis' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/redis.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 3),
+            'replace_placeholders' => true,
+        ],
+
+        'grabIpInfo' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/grabIpInfo.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 3),
+            'replace_placeholders' => true,
+        ],
+
+        'upload' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/upload.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 3),
+            'replace_placeholders' => true,
+        ],
+
+        'purgeCache' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/purgeCache.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 3),
+            'replace_placeholders' => true,
+        ],
     ],
 
 ];
