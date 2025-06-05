@@ -44,8 +44,8 @@ class UploadRequest extends BaseRequest
 
         return [
             'module_code' => $this->stringInRule($allowedModules),
-            'owner_id' => $this->intRule(),
-            'owner_field' => $this->stringRule(config('custom.length.upload.owner_field_max'), true),
+            'related_id' => $this->intRule(),
+            'related_field' => $this->stringRule(config('custom.length.upload.related_field_max'), true),
             'files' => $this->arrayRule(true),
             'files.*.file' => $this->fileRule($uploadSetting['extensions'] ?? [], config('custom.upload.max_size', 5120), true),
             'files.*.upload_id' => $this->intRule().'|distinct|'.$this->existsRule($this->table, 'id'),

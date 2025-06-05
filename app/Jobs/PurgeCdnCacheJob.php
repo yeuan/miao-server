@@ -17,9 +17,14 @@ class PurgeCdnCacheJob implements ShouldBeUnique, ShouldQueue
      */
     public function __construct(
         protected array $urls,
-        protected ?int $uniqueFor = null // 預設值為 null
-    ) {
-        $this->uniqueFor = config('custom.settings.queue.unique_lock_time', 300);
+    ) {}
+
+    /**
+     * 解除任務唯一鎖的秒數
+     */
+    public function uniqueFor(): int
+    {
+        return config('custom.settings.queue.unique_lock_time', 300);
     }
 
     /**

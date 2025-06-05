@@ -20,6 +20,12 @@ class BannerRepository extends BaseRepository
         if (isset($this->_search['id'])) {
             $conditions[] = ['id', '=', $this->_search['id']];
         }
+        if (isset($this->_search['owner_type'])) {
+            $conditions[] = ['owner_type', '=', $this->_search['owner_type']];
+        }
+        if (isset($this->_search['owner_id'])) {
+            $conditions[] = ['owner_id', '=', $this->_search['owner_id']];
+        }
         if (isset($this->_search['type'])) {
             $conditions[] = ['type', '=', $this->_search['type']];
         }

@@ -32,10 +32,14 @@ return [
         'url_max' => 255,
     ],
     'upload' => [
-        'owner_field_max' => 50,
+        'related_field_max' => 50,
     ],
     'upload_settings' => [
         'thumb_width_max' => 1500,
         'thumb_height_max' => 1500,
+    ],
+
+    'clean_unused_uploads' => [
+        'minutes_max' => 10080, // (分鐘)7天
     ],
 ];

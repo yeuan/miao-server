@@ -18,14 +18,14 @@ class LogUploadRepository extends BaseRepository
         $conditions = [];
 
         // 基本 where 條件
-        if (isset($this->_search['owner_type'])) {
-            $conditions[] = ['owner_type', '=', $this->_search['owner_type']];
+        if (isset($this->_search['related_table'])) {
+            $conditions[] = ['related_table', '=', $this->_search['related_table']];
         }
-        if (isset($this->_search['owner_field'])) {
-            $conditions[] = ['owner_field', '=', $this->_search['owner_field']];
+        if (isset($this->_search['related_field'])) {
+            $conditions[] = ['related_field', '=', $this->_search['related_field']];
         }
-        if (isset($this->_search['owner_id'])) {
-            $conditions[] = ['owner_id', '=', $this->_search['owner_id']];
+        if (isset($this->_search['related_id'])) {
+            $conditions[] = ['related_id', '=', $this->_search['related_id']];
         }
         if (isset($this->_search['id'])) {
             $conditions[] = ['id', '=', $this->_search['id']];
@@ -40,14 +40,14 @@ class LogUploadRepository extends BaseRepository
     /**
      * 取得Owner的上傳紀錄
      */
-    public function getLogsByOwner(?string $ownerType, ?string $ownerField, ?int $ownerId): object
+    public function getLogsByOwner(?string $relatedTable, ?string $relatedField, ?int $relatedId): object
     {
         // 只要有一個沒傳，直接回傳空陣列
-        if (empty($ownerType) || empty($ownerField) || empty($ownerId)) {
+        if (empty($relatedTable) || empty($relatedField) || empty($relatedId)) {
             return collect();
         }
 
-        return $this->search(['owner_type' => $ownerType, 'owner_field' => $ownerField, 'owner_id' => $ownerId])
+        return $this->search(['related_table' => $relatedTable, 'related_field' => $relatedField, 'related_id' => $relatedId])
             ->select(['id', 'disk', 'file_path', 'thumbnail_path'])
             ->result();
     }

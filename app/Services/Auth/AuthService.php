@@ -80,6 +80,11 @@ class AuthService
             throw new ApiException(ApiCode::AUTH_STATUS_DISABLE->name);
         }
 
+        // 檢查後台類型
+        if ($user->backstage !== $backstage) {
+            throw new ApiException(ApiCode::AUTH_BACKSTAGE_ERROR->name);
+        }
+
         // 記錄Token
         $ttl = getJwtTtlInSeconds();
         TokenManager::make($scene, $deviceId)->setPrimaryToken($user->id, $token, $ttl);

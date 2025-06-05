@@ -17,7 +17,7 @@ class UploadController extends Controller
         try {
             $result = $this->uploadService->handleUpload($request->validated(), 'image');
 
-            // 回傳 log_upload id 給前端（資料送出時前端再送入給主資料表owner_id配對）
+            // 回傳 log_upload id 給前端（資料送出時前端再送入給主資料表related_id配對）
             return respondCollection($result);
         } catch (\Throwable $e) {
             return respondError('SYSTEM_FAILED', $e);

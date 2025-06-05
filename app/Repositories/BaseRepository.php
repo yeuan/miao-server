@@ -397,6 +397,15 @@ abstract class BaseRepository
         return $row;
     }
 
+    public function chunk(int $size, callable $callback): void
+    {
+        $this->_doAction(); // 組合 query
+
+        $this->db->chunk($size, $callback);
+
+        $this->reset();
+    }
+
     /**
      * 建立資料
      */

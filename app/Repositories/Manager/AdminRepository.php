@@ -14,7 +14,7 @@ class AdminRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $data = $this->_preModelsAction($data);
+        $data = $this->_preAction($data);
 
         return parent::create($data);
     }
@@ -32,6 +32,9 @@ class AdminRepository extends BaseRepository
         // 基本 where 條件
         if (isset($this->_search['id'])) {
             $conditions[] = ['id', '=', $this->_search['id']];
+        }
+        if (isset($this->_search['backstage'])) {
+            $conditions[] = ['backstage', '=', $this->_search['backstage']];
         }
         if (isset($this->_search['role_id'])) {
             $conditions[] = ['role_id', '=', $this->_search['role_id']];

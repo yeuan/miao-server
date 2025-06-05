@@ -10,7 +10,10 @@ class AdminResource extends SuccessResource
     {
         return [
             'id' => $this->id,
+            'backstage' => $this->backstage,
             'username' => $this->username,
+            'tenant_id' => $this->tenant_id,
+            'agent_id' => $this->agent_id,
             'role_id' => $this->role_id,
             'role_name' => optional($this->whenLoaded('role'))->name ?? '',
             'login_ip' => $this->login_ip,

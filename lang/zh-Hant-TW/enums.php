@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Enums\ApiCode;
+use App\Enums\Backstage;
+use App\Enums\Common\OwnerType;
 use App\Enums\Content\BannerFlag;
 use App\Enums\Content\BannerLinkType;
 use App\Enums\Content\BannerType;
@@ -41,6 +43,7 @@ return [
         'AUTH_JWT_BLACK' => '登入Token無效',
         'AUTH_JWT_INVALID' => '登入Token失效',
         'AUTH_JWT_EXPIRED' => '登入Token過期',
+        'AUTH_BACKSTAGE_ERROR' => '後台類型不符',
     ],
 
     HttpStatus::class => [
@@ -50,7 +53,7 @@ return [
         'PARAMS_ERROR' => '參數錯誤',
     ],
 
-    // 執行狀態
+    // 執行狀態代理後台
     Success::class => [
         'FAIL' => '失敗',
         'SUCCESS' => '成功',
@@ -69,6 +72,17 @@ return [
         'ARCHIVED' => '已封存',
         'REJECTED' => '審核未通過',
         'EXPIRED' => '已過期',
+    ],
+
+    Backstage::class => [
+        'ADMIN' => '總後台',
+        'AGENT' => '代理後台',
+        'TENANT' => '多租客後台',
+    ],
+
+    OwnerType::class => [
+        'PLATFORM' => '主平台',
+        'TENANT' => '多租客平台',
     ],
 
     // 公告類型
@@ -121,7 +135,7 @@ return [
     AdminNavFlag::class => [
         'ALLOW_BACKSTAGE' => '允許總後台',
         'ALLOW_AGENT_BACKSTAGE' => '允許代理後台',
-        'ALLOW_RESERVE' => '預留',
+        'ALLOW_TENANT_BACKSTAGE' => '允許多租客後台',
         'ACTION_RECORD' => '操作記錄',
         'FINAL' => '最後一層',
     ],

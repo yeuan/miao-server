@@ -2,16 +2,15 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class SortByRule implements Rule
+class SortByRule implements ValidationRule
 {
     private array $allowedColumns;
 
     /**
      * Construct a new SortByRule.
-     *
-     * @param  array  $allowedColumns  允許的排序欄位
      */
     public function __construct(?array $allowedColumns = null)
     {
@@ -20,12 +19,8 @@ class SortByRule implements Rule
 
     /**
      * 驗證欄位及排序方向是否合法。
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // 處理排序條件字串
         $fields = $this->parseSortFields($value);
@@ -36,16 +31,18 @@ class SortByRule implements Rule
 
             // 驗證欄位名稱是否在允許的範圍內
             if (! $this->isValidColumn($column)) {
-                return false;
+                $fail("The {$attribute} contains invalid field \"{$column}\". Allowed fields: ".implode(', ', $this->allowedColumns));
+
+                return;
             }
 
             // 驗證排序方向是否有效
             if (! $this->isValidDirection($direction)) {
-                return false;
+                $fail("The {$attribute} has an invalid direction \"{$direction}\". Allowed: asc, desc.");
+
+                return;
             }
         }
-
-        return true;
     }
 
     /**
@@ -83,15 +80,5 @@ class SortByRule implements Rule
     private function isValidDirection(string $direction): bool
     {
         return in_array($direction, ['asc', 'desc']);
-    }
-
-    /**
-     * 驗證失敗後的錯誤訊息。
-     *
-     * @return string
-     */
-    public function message()
-    {
-        return 'The :attribute format is invalid. It should be "field direction", e.g., "status desc, id asc".';
     }
 }

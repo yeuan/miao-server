@@ -16,12 +16,12 @@ if (! function_exists('getVerificationField')) {
     }
 }
 
-if (! function_exists('getOwnerTypeByModuleCode')) {
+if (! function_exists('getRelatedTableByModuleCode')) {
 
     /**
-     * 依 module_code 取得對應 owner_type（Model::class）
+     * 依 module_code 取得對應 related_table（Model::class）
      */
-    function getOwnerTypeByModuleCode(string $moduleCode): ?string
+    function getRelatedTableByModuleCode(string $moduleCode): ?string
     {
         $map = config('module_map');
         $moduleCode = strtolower($moduleCode);

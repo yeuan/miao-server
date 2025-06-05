@@ -3,6 +3,7 @@
 namespace App\Observers\System;
 
 use App\Enums\RecordStatus;
+use App\Models\Log\LogUpload;
 use App\Repositories\Log\LogUploadRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -23,15 +24,15 @@ class AttachUploadObserver
         }
 
         $repository = app(LogUploadRepository::class);
-        $ownerType = get_class($model);
-        $ownerId = $model->id;
+        $relatedTable = get_class($model);
+        $relatedId = $model->id;
 
-        foreach ($uploadIdsByField as $ownerField => $uploadIds) {
-            if (empty($ownerField)) {
+        foreach ($uploadIdsByField as $relatedField => $uploadIds) {
+            if (empty($relatedField)) {
                 continue;
-            } // 避免 owner_field 為空
+            } // 避免 related_field 為空
             // 只處理有上傳 id 的欄位
-            $oldLogs = $repository->getLogsByOwner($ownerType, $ownerField, $ownerId)->keyBy('id');
+            $oldLogs = $repository->getLogsByOwner($relatedTable, $relatedField, $relatedId)->keyBy('id');
             $oldLogIds = $oldLogs->keys()->all();
 
             // 比對被移除的 id
@@ -46,9 +47,9 @@ class AttachUploadObserver
                 $repository->updateBatch(
                     array_map(fn ($id) => [
                         'id' => $id,
-                        'owner_type' => $ownerType,
-                        'owner_id' => $ownerId,
-                        'owner_field' => $ownerField,
+                        'related_table' => $relatedTable,
+                        'related_id' => $relatedId,
+                        'related_field' => $relatedField,
                         'status' => RecordStatus::ACTIVE->value,
                     ], $uploadIds)
                 );
@@ -62,12 +63,12 @@ class AttachUploadObserver
     public function deleted($model): void
     {
         $repository = app(LogUploadRepository::class);
-        $ownerType = get_class($model);
-        $ownerId = $model->id;
+        $relatedTable = get_class($model);
+        $relatedId = $model->id;
         $fields = method_exists($model, 'getUploadFields') ? $model->getUploadFields() : [];
 
         foreach ($fields as $field) {
-            foreach ($repository->getLogsByOwner($ownerType, $field, $ownerId) as $log) {
+            foreach ($repository->getLogsByOwner($relatedTable, $field, $relatedId) as $log) {
                 $this->deleteLogUpload($log);
             }
         }

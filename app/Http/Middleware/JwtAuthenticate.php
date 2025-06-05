@@ -18,6 +18,8 @@ class JwtAuthenticate extends BaseMiddleware
      */
     public function handle(Request $request, Closure $next, string $guard)
     {
+        // 轉換第一個為大寫
+        $guard = lcfirst($guard);
         // 先指定 guard，確保 provider + 驗證是正確的
         Auth::shouldUse("{$guard}Auth");
 

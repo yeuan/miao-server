@@ -22,7 +22,7 @@ class AdminController extends Controller
                 'refer' => $refer,
             ] = $this->adminService->list($request->validated());
 
-            return respondCollection(AdminCollection::make($result)->additional(compact('refer')));
+            return respondCollection(AdminCollection::make($result), compact('refer'));
         } catch (\Throwable $e) {
             return respondError('SYSTEM_FAILED', $e);
         }

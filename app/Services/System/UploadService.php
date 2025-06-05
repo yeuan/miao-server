@@ -54,9 +54,9 @@ class UploadService
         // 支援單檔與多檔上傳
         $files = $request['files'];
         $moduleCode = $request['module_code'] ?? '';
-        $ownerType = getOwnerTypeByModuleCode($moduleCode);
-        $ownerField = $request['owner_field'];
-        $ownerId = $request['owner_id'] ?? null;
+        $relatedTable = getRelatedTableByModuleCode($moduleCode);
+        $relatedField = $request['related_field'];
+        $relatedId = $request['related_id'] ?? null;
 
         // 取得上傳設定
         $setting = $this->getUploadSetting($moduleCode, $type);
@@ -67,7 +67,7 @@ class UploadService
         $uploadDir = $this->buildUploadDir($type);
 
         // 優化這裡：先撈全部舊的log到 array，key 用 id
-        $oldLogs = $this->logUploadRepository->getLogsByOwner($ownerType, $ownerField, $ownerId)->keyBy('id');
+        $oldLogs = $this->logUploadRepository->getLogsByOwner($relatedTable, $relatedField, $relatedId)->keyBy('id');
         $oldLogIds = $oldLogs->keys()->all();
 
         $results = $newLogIds = [];
@@ -75,11 +75,11 @@ class UploadService
         foreach ($files as $file) {
             // 覆蓋（同時有 file+upload_id）
             if (! empty($file['file']) && ! empty($file['upload_id'])) {
-                $results[] = $this->handleOverwrite($file, $setting, $convertType, $ownerField, $uploadDir, $oldLogs, $newLogIds);
+                $results[] = $this->handleOverwrite($file, $setting, $convertType, $relatedField, $uploadDir, $oldLogs, $newLogIds);
             }
             // 新增
             elseif (! empty($file['file'])) {
-                $results[] = $this->handleNewUpload($file, $ownerType, $ownerId, $setting, $convertType, $ownerField, $uploadDir, $newLogIds);
+                $results[] = $this->handleNewUpload($file, $relatedTable, $relatedId, $setting, $convertType, $relatedField, $uploadDir, $newLogIds);
             }
             // 保留（只傳 upload_id）
             elseif (! empty($file['upload_id'])) {
@@ -122,13 +122,13 @@ class UploadService
     /**
      * 處理覆蓋上傳
      */
-    protected function handleOverwrite(array $file, array $setting, bool $convertType, string $ownerField, string $uploadDir, Collection|array|null $oldLogs, array &$newLogIds): array
+    protected function handleOverwrite(array $file, array $setting, bool $convertType, string $relatedField, string $uploadDir, Collection|array|null $oldLogs, array &$newLogIds): array
     {
         $logId = $file['upload_id'];
 
         $saveResult = $this->saveFileToStorage($file['file'], $setting, $convertType, $uploadDir);
         $this->logUploadRepository->update([
-            'owner_field' => $ownerField,
+            'related_field' => $relatedField,
             'file_path' => $saveResult['file_path'],
             'file_name' => $file['file']->getClientOriginalName(),
             'mime_type' => $this->getMimeType($saveResult['ext']) ?? $file['file']->getClientMimeType(),
@@ -149,13 +149,13 @@ class UploadService
     /**
      * 處理新上傳array
      */
-    protected function handleNewUpload(array $file, ?string $ownerType, int|string|null $ownerId, array $setting, bool $convertType, string $ownerField, string $uploadDir, array &$newLogIds): array
+    protected function handleNewUpload(array $file, ?string $relatedTable, int|string|null $relatedId, array $setting, bool $convertType, string $relatedField, string $uploadDir, array &$newLogIds): array
     {
         $saveResult = $this->saveFileToStorage($file['file'], $setting, $convertType, $uploadDir);
         $logId = $this->logUploadRepository->create([
-            'owner_type' => $ownerType,
-            'owner_field' => $ownerField,
-            'owner_id' => $ownerId,
+            'related_table' => $relatedTable,
+            'related_field' => $relatedField,
+            'related_id' => $relatedId,
             'disk' => $this->disk,
             'file_path' => $saveResult['file_path'],
             'file_name' => $file['file']->getClientOriginalName(),

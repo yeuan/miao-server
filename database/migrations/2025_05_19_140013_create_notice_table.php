@@ -19,6 +19,8 @@ return new class extends Migration
 
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
+            $table->string('owner_type', 20)->default('platform')->comment('資料歸屬類型：platform/tenant');
+            $table->unsignedBigInteger('owner_id')->default(0)->comment('資料歸屬 ID');
             $table->unsignedTinyInteger('type')->default(1)->comment('公告類型');
             $table->string('title', 50)->comment('公告標題');
             $table->text('content')->comment('公告內容');
@@ -38,6 +40,9 @@ return new class extends Migration
             $table->index(['type', 'status', 'flag'], 'type_status_flag_index');
             $table->index(['type', 'status', 'start_time', 'end_time'], 'type_status_time_index');
             $table->index(['type', 'type_sort'], 'type_type_sort_index');
+            $table->index(['owner_type', 'owner_id', 'type', 'status'], 'owner_type_status_index');
+            $table->index(['owner_type', 'owner_id', 'type', 'status', 'flag'], 'owner_type_status_flag_index');
+            $table->index(['owner_type', 'owner_id', 'type', 'status', 'start_time', 'end_time'], 'owner_type_status_time_index');
         });
 
         DB::statement("ALTER TABLE `$this->tableName` comment '公告表'");

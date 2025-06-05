@@ -37,4 +37,5 @@ enum ApiCode: int
     // case AUTH_JWT_BLACK = 40122;
     case AUTH_JWT_INVALID = 40123;
     case AUTH_JWT_EXPIRED = 40124;
+    case AUTH_BACKSTAGE_ERROR = 40125;
 }

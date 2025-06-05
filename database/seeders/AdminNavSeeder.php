@@ -16,7 +16,7 @@ class AdminNavSeeder extends Seeder
 
         $allowBackstage = AdminNavFlag::ALLOW_BACKSTAGE->value; // 允許總後台 -> 1
         $allowAgentBackstage = AdminNavFlag::ALLOW_AGENT_BACKSTAGE->value; // 允許代理後台 -> 2
-        $allowReserve = AdminNavFlag::ALLOW_RESERVE->value; // 預留 -> 4
+        $allowReserve = AdminNavFlag::ALLOW_TENANT_BACKSTAGE->value; // 允許多租客後台 -> 4
         $actionRecord = AdminNavFlag::ACTION_RECORD->value; // 操作記錄 -> 8
         $final = AdminNavFlag::FINAL->value; // 最後一層 -> 16
 

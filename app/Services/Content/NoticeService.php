@@ -24,6 +24,8 @@ class NoticeService
                 'status' => \App\Enums\Status::toObject(),
                 'type' => \App\Enums\Content\NoticeType::toObject(),
                 'flag' => \App\Enums\Content\NoticeFlag::toObject(),
+                'owner_type' => \App\Enums\Common\OwnerType::toObject(),
+                // 'owner' => $this->adminRoleRepository->getRoleList(true),
             ],
         ];
     }

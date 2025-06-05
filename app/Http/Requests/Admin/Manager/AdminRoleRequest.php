@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Manager;
 
+use App\Enums\Backstage;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Manager\AdminRole;
@@ -39,9 +40,10 @@ class AdminRoleRequest extends BaseRequest
     private function storeRules(): array
     {
         return [
+            'backstage' => $this->enumRule(Backstage::values()),
             'name' => 'bail|'.$this->stringRule(config('custom.length.admin_role.name_max'), true).'|'.$this->uniqueRule($this->table),
             'status' => $this->enumRule(Status::values()),
-            'allow_nav' => $this->jsonRule(),
+            'allow_nav' => $this->jsonRule(true),
         ];
     }
 
@@ -54,9 +56,10 @@ class AdminRoleRequest extends BaseRequest
 
         return [
             'id' => 'bail|'.$this->intRule(true),
+            'backstage' => $this->enumRule(Backstage::values(), true),
             'name' => 'bail|'.$this->stringRule(config('custom.length.admin_role.name_max'), true).'|'.$this->uniqueRule($this->table, 'name', $id),
             'status' => $this->enumRule(Status::values()),
-            'allow_nav' => $this->jsonRule(),
+            'allow_nav' => $this->jsonRule(true),
         ];
     }
 
@@ -76,6 +79,7 @@ class AdminRoleRequest extends BaseRequest
     private function indexRules(): array
     {
         return [
+            'backstage' => $this->enumRule(Backstage::values()),
             'name' => $this->stringRule(config('custom.length.admin_role.name_max')),
             'status' => $this->enumRule(Status::values()),
             'sort_by' => $this->sortRule($this->getTableColumns($this->table)),

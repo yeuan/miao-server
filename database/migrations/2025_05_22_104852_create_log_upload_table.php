@@ -29,9 +29,9 @@ return new class extends Migration
 
         $this->schema->create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('owner_type', 100)->nullable()->comment('對應資料表');
-            $table->string('owner_field', 50)->nullable()->comment('對應欄位');
-            $table->unsignedBigInteger('owner_id')->nullable()->comment('對應id');
+            $table->string('related_table', 100)->nullable()->comment('對應資料表');
+            $table->string('related_field', 50)->nullable()->comment('對應欄位');
+            $table->unsignedBigInteger('related_id')->nullable()->comment('對應資料表id');
             $table->string('disk', 150)->default('public')->comment('存放目錄類型');
             $table->string('file_path')->comment('檔案路徑');
             $table->string('file_name')->comment('原始檔名');
@@ -45,8 +45,8 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_at')->default(0)->comment('更新時間');
 
             // 索引
-            $table->index(['owner_type', 'owner_id'], 'owner_index');
-            $table->index(['owner_type', 'owner_id', 'status'], 'owner_status_index');
+            $table->index(['related_table', 'related_field', 'related_id'], 'related_full_index');
+            $table->index(['related_table', 'related_id', 'status'], 'related_status_index');
             $table->index(['status', 'created_at'], 'status_created_at_index');
         });
 

@@ -13,7 +13,7 @@ Route::group(['prefix' => 'v1'], function () use ($provider) {
     });
 
     // 登入驗證
-    Route::middleware(['jwt.refresh', 'jwt.auth:'.lcfirst($provider),  'permission'])->group(function () use ($provider) {
+    Route::middleware(['jwt.refresh', 'jwt.auth:'.$provider, 'ensure.backstage:'.$provider,  'permission'])->group(function () use ($provider) {
         // 登入相關
         Route::controllerGroup('auth', $provider, 'Auth\AuthController', function () {
             Route::post('logout', 'logout')->name('logout');
@@ -63,6 +63,11 @@ Route::group(['prefix' => 'v1'], function () use ($provider) {
 
         });
 
+    });
+
+    // 輔助工具
+    Route::controllerGroup('tool', $provider, 'System\ToolController', function () {
+        Route::get('clean-unused-uploads/{minutes?}', 'cleanUnusedUploads')->name('tool.clean-unused-uploads');
     });
 });
 // });

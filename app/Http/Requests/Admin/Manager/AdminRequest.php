@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\Admin\Manager;
 
+use App\Enums\Backstage;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Manager\Admin;
 use App\Models\Manager\AdminRole;
+use App\Models\Partner\Agent;
+use App\Models\Tenant\Tenant;
 
 class AdminRequest extends BaseRequest
 {
@@ -13,12 +16,18 @@ class AdminRequest extends BaseRequest
 
     private string $tableRole;
 
+    private string $tableTenant;
+
+    private string $tableAgent;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->table = (new Admin)->getTable();
         $this->tableRole = (new AdminRole)->getTable();
+        $this->tableTenant = (new Tenant)->getTable();
+        $this->tableAgent = (new Agent)->getTable();
     }
 
     /**
@@ -42,10 +51,15 @@ class AdminRequest extends BaseRequest
      */
     private function storeRules(): array
     {
+        $backstage = (int) $this->input('backstage', 1);
+
         return [
+            'backstage' => $this->enumRule(Backstage::values()),
+            'tenant_id' => $this->intRule().'|'.$this->requiredIfRule('backstage', [Backstage::AGENT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
+            'agent_id' => $this->intRule().'|'.$this->requiredIfRule('backstage', [Backstage::TENANT->value]).'|'.$this->existsRule($this->tableAgent, 'id'),
             'username' => 'bail|'.$this->alphaNumBetweenRule(config('custom.length.admin.username_min'), config('custom.length.admin.username_max'), true).'|'.$this->uniqueRule($this->table, 'username'),
             'password' => array_merge(['bail'], $this->passwordRule(config('custom.length.admin.password_min'), config('custom.length.admin.password_max'), true)),
-            'role_id' => $this->intExistsUnlessRule($this->tableRole, 'id', true),
+            'role_id' => $this->backstageRoleRule($backstage, $this->tableRole, 'id', true),
             'status' => $this->enumRule(Status::values()),
         ];
     }
@@ -56,12 +70,16 @@ class AdminRequest extends BaseRequest
     private function updateRules(): array
     {
         $id = (int) $this->route('id');
+        $backstage = (int) $this->input('backstage', 1);
 
         return [
             'id' => 'bail|'.$this->intRule(true),
+            'backstage' => $this->enumRule(Backstage::values(), true),
+            'tenant_id' => $this->intRule().'|'.$this->requiredIfRule('backstage', [Backstage::AGENT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
+            'agent_id' => $this->intRule().'|'.$this->requiredIfRule('backstage', [Backstage::TENANT->value]).'|'.$this->existsRule($this->tableAgent, 'id'),
             'username' => 'bail|'.$this->alphaNumBetweenRule(config('custom.length.admin.username_min'), config('custom.length.admin.username_max'), true).'|'.$this->uniqueRule($this->table, 'username', $id),
             'password' => array_merge(['bail'], $this->passwordRule(config('custom.length.admin.password_min'), config('custom.length.admin.password_max'), false)),
-            'role_id' => $this->intExistsUnlessRule($this->tableRole, 'id', true),
+            'role_id' => $this->backstageRoleRule($backstage, $this->tableRole, 'id', true),
             'status' => $this->enumRule(Status::values()),
         ];
     }
@@ -82,6 +100,7 @@ class AdminRequest extends BaseRequest
     private function indexRules(): array
     {
         return [
+            'backstage' => $this->enumRule(Backstage::values()),
             'username' => $this->alphaNumBetweenRule(config('custom.length.admin.username_min'), config('custom.length.admin.username_max')),
             'role_id' => $this->intExistsUnlessRule($this->tableRole, 'id'),
             'status' => $this->enumRule(Status::values()),

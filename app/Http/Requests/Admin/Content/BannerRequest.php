@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Content;
 
+use App\Enums\Common\OwnerType;
 use App\Enums\Content\BannerFlag;
 use App\Enums\Content\BannerLinkType;
 use App\Enums\Content\BannerType;
@@ -9,21 +10,25 @@ use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Content\Banner;
 use App\Models\Log\LogUpload;
+use App\Models\Tenant\Tenant;
 
 class BannerRequest extends BaseRequest
 {
     private string $table;
 
-    private static $noticeColumns = null;
+    private string $tableLog;
+
+    private string $tableTenant;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->table = (new Banner)->getTable();
-        $logTable = new LogUpload;
-        $connection = $logTable->getConnectionName();
-        $this->logTable = ($connection ? "{$connection}." : '').$logTable->getTable();
+        $this->tableTenant = (new Tenant)->getTable();
+        $tableLog = new LogUpload;
+        $connection = $tableLog->getConnectionName();
+        $this->tableLog = ($connection ? "{$connection}." : '').$tableLog->getTable();
     }
 
     /**
@@ -48,13 +53,15 @@ class BannerRequest extends BaseRequest
     private function storeRules(): array
     {
         return [
+            'owner_type' => $this->stringInRule(OwnerType::values()),
+            'owner_id' => $this->intRule().'|'.$this->requiredIfRule('owner_type', [OwnerType::TENANT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(BannerType::values(), true),
             'image' => $this->arrayRule(),
             'image.path' => $this->stringRule(config('custom.length.banner.image_max')),
-            'image.upload_id' => 'required_with:image.path'.$this->intRule().'|distinct|'.$this->existsRule($this->logTable, 'id'),
+            'image.upload_id' => 'required_with:image.path'.$this->intRule().'|distinct|'.$this->existsRule($this->tableLog, 'id'),
             'image_app' => $this->arrayRule(),
             'image_app.path' => $this->stringRule(config('custom.length.banner.image_app_max')),
-            'image_app.upload_id' => 'required_with:image_app.path'.$this->intRule().'|distinct|'.$this->existsRule($this->logTable, 'id'),
+            'image_app.upload_id' => 'required_with:image_app.path'.$this->intRule().'|distinct|'.$this->existsRule($this->tableLog, 'id'),
             'url' => $this->urlRule(config('custom.length.banner.url_max')),
             'link_type' => $this->enumRule(BannerLinkType::values(), true),
             'module_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value]),
@@ -74,13 +81,15 @@ class BannerRequest extends BaseRequest
     {
         return [
             'id' => 'bail|'.$this->intRule(true),
+            'owner_type' => $this->stringInRule(OwnerType::values(), true),
+            'owner_id' => $this->intRule().'|'.$this->requiredIfRule('owner_type', [OwnerType::TENANT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(BannerType::values()),
             'image' => $this->arrayRule(),
             'image.path' => $this->stringRule(config('custom.length.banner.image_max')),
-            'image.upload_id' => $this->intRule().'|distinct|'.$this->existsRule($this->logTable, 'id'),
+            'image.upload_id' => $this->intRule().'|distinct|'.$this->existsRule($this->tableLog, 'id'),
             'image_app' => $this->arrayRule(),
             'image_app.path' => $this->stringRule(config('custom.length.banner.image_app_max')),
-            'image_app.upload_id' => $this->intRule().'|distinct|'.$this->existsRule($this->logTable, 'id'),
+            'image_app.upload_id' => $this->intRule().'|distinct|'.$this->existsRule($this->tableLog, 'id'),
             'url' => $this->urlRule(config('custom.length.banner.url_max')),
             'link_type' => $this->enumRule(BannerLinkType::values()),
             'module_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value]),
@@ -109,6 +118,8 @@ class BannerRequest extends BaseRequest
     private function indexRules(): array
     {
         return [
+            'owner_type' => $this->stringInRule(OwnerType::values()),
+            'owner_id' => $this->intRule().'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(BannerType::values()),
             'flag' => $this->enumRule(BannerFlag::values()),
             'status' => $this->enumRule(Status::values()),

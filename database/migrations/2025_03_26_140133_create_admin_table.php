@@ -19,6 +19,9 @@ return new class extends Migration
 
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedTinyInteger('backstage')->default(1)->comment('後台類型 1:主後台 2:代理 3:租客');
+            $table->unsignedInteger('tenant_id')->nullable()->comment('所屬租客，租客管理員專用');
+            $table->unsignedInteger('agent_id')->nullable()->comment('所屬代理商，代理管理員專用');
             $table->string('username')->default('')->comment('用戶名')->unique();
             $table->string('password')->default('')->comment('密碼');
             // $table->string('token', 500)->default('')->comment('Token');
@@ -33,10 +36,10 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_at')->default(0)->comment('更新時間');
 
             // 索引
-            $table->index(['role_id', 'status'], 'role_id_status_index');
-            $table->index(['status', 'username', 'updated_by', 'updated_at'], 'activity_index');
+            $table->index(['backstage', 'role_id', 'status'], 'backstage_role_id_status_index');
+            $table->index(['backstage', 'status', 'username'], 'backstage_status_username_index');
             $table->index(['login_ip', 'login_time', 'status'], 'login_index');
-            $table->index(['role_id', 'username', 'status'], 'status_role_username_index');
+            $table->index(['status', 'username', 'updated_by', 'updated_at'], 'activity_index');
         });
 
         DB::statement("ALTER TABLE `$this->tableName` comment '管理帳號'");

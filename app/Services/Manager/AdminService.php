@@ -26,6 +26,7 @@ class AdminService
             'refer' => [
                 'role' => $this->adminRoleRepository->getRoleList(true),
                 'status' => \App\Enums\Status::toObject(),
+                'backstage' => \App\Enums\Backstage::toObject(),
             ],
         ];
     }

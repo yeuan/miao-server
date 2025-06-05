@@ -19,6 +19,8 @@ return new class extends Migration
 
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
+            $table->string('owner_type', 20)->default('platform')->comment('資料歸屬類型：platform/tenant');
+            $table->unsignedBigInteger('owner_id')->default(0)->comment('資料歸屬 ID');
             $table->unsignedTinyInteger('type')->default(1)->comment('類型 1:首頁輪播、2:登入頁、3:活動頁、4:商城專區、5:金流專區、6:遊戲公告、7:會員中心');
             $table->string('image')->default('')->comment('圖片路徑');
             $table->string('image_app')->default('')->comment('手機版圖片');
@@ -41,6 +43,9 @@ return new class extends Migration
             $table->index(['type', 'status', 'flag'], 'type_status_flag_index');
             $table->index(['type', 'status', 'start_time', 'end_time'], 'type_status_time_index');
             $table->index(['type', 'status', 'flag', 'start_time', 'end_time'], 'type_status_flag_time_index');
+            $table->index(['owner_type', 'owner_id', 'type', 'status'], 'owner_type_status_index');
+            $table->index(['owner_type', 'owner_id', 'type', 'status', 'flag'], 'owner_type_status_flag_index');
+            $table->index(['owner_type', 'owner_id', 'type', 'status', 'start_time', 'end_time'], 'owner_type_status_time_index');
         });
 
         DB::statement("ALTER TABLE `$this->tableName` comment '輪播圖'");

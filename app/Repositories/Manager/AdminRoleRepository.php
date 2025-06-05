@@ -21,6 +21,9 @@ class AdminRoleRepository extends BaseRepository
         if (isset($this->_search['id'])) {
             $conditions[] = ['id', '=', $this->_search['id']];
         }
+        if (isset($this->_search['backstage'])) {
+            $conditions[] = ['backstage', '=', $this->_search['backstage']];
+        }
         if (isset($this->_search['name'])) {
             $conditions[] = ['name', 'like', '%'.$this->_search['name'].'%'];
         }

@@ -12,19 +12,6 @@ class NoticeRepository extends BaseRepository
         parent::__construct($entity);
     }
 
-    public function create(array $data): int
-    {
-        $data = $this->_preAction($data);
-
-        return parent::create($data);
-    }
-
-    public function update(array $row, int $id = 0): void
-    {
-        $row = $this->_preAction($row);
-        parent::update($row, $id);
-    }
-
     public function _doSearch(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
         $conditions = [];
@@ -32,6 +19,12 @@ class NoticeRepository extends BaseRepository
         // 基本 where 條件
         if (isset($this->_search['id'])) {
             $conditions[] = ['id', '=', $this->_search['id']];
+        }
+        if (isset($this->_search['owner_type'])) {
+            $conditions[] = ['owner_type', '=', $this->_search['owner_type']];
+        }
+        if (isset($this->_search['owner_id'])) {
+            $conditions[] = ['owner_id', '=', $this->_search['owner_id']];
         }
         if (isset($this->_search['type'])) {
             $conditions[] = ['type', '=', $this->_search['type']];
@@ -60,17 +53,5 @@ class NoticeRepository extends BaseRepository
         }
 
         return $query;
-    }
-
-    private function _preAction(array $data): array
-    {
-        if (isset($data['start_time']) && ! is_numeric($data['start_time'])) {
-            $data['start_time'] = strtotime($data['start_time']);
-        }
-        if (isset($data['end_time']) && ! is_numeric($data['end_time'])) {
-            $data['end_time'] = strtotime($data['end_time']);
-        }
-
-        return $data;
     }
 }

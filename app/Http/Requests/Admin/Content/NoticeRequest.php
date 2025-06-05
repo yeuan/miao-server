@@ -2,23 +2,26 @@
 
 namespace App\Http\Requests\Admin\Content;
 
+use App\Enums\Common\OwnerType;
 use App\Enums\Content\NoticeFlag;
 use App\Enums\Content\NoticeType;
 use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Content\Notice;
+use App\Models\Tenant\Tenant;
 
 class NoticeRequest extends BaseRequest
 {
     private string $table;
 
-    private static $noticeColumns = null;
+    private string $tableTenant;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->table = (new Notice)->getTable();
+        $this->tableTenant = (new Tenant)->getTable();
     }
 
     /**
@@ -43,6 +46,8 @@ class NoticeRequest extends BaseRequest
     private function storeRules(): array
     {
         return [
+            'owner_type' => $this->stringInRule(OwnerType::values()),
+            'owner_id' => $this->intRule().'|'.$this->requiredIfRule('owner_type', [OwnerType::TENANT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(NoticeType::values(), true),
             'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
             'start_time' => $this->dateRule(),
@@ -61,6 +66,8 @@ class NoticeRequest extends BaseRequest
     {
         return [
             'id' => 'bail|'.$this->intRule(true),
+            'owner_type' => $this->stringInRule(OwnerType::values(), true),
+            'owner_id' => $this->intRule().'|'.$this->requiredIfRule('owner_type', [OwnerType::TENANT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(NoticeType::values(), true),
             'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
             'start_time' => $this->dateRule(),
@@ -88,6 +95,8 @@ class NoticeRequest extends BaseRequest
     private function indexRules(): array
     {
         return [
+            'owner_type' => $this->stringInRule(OwnerType::values()),
+            'owner_id' => $this->intRule().'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(NoticeType::values()),
             'flag' => $this->flagRule(NoticeFlag::values()),
             'status' => $this->enumRule(Status::values()),

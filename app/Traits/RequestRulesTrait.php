@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Rules\BackstageRoleMatchRule;
 use App\Rules\SortByRule;
 use Illuminate\Validation\Rules\Password;
 
@@ -194,6 +195,17 @@ trait RequestRulesTrait
             'string',                        // 確保是字串格式
             new SortByRule($allowedColumns), // 自訂的排序規則物件
         ];
+    }
+
+    /**
+     * 驗證角色是否與指定 backstage 類型一致
+     */
+    protected function backstageRoleRule(int $backstage, string $table, string $column = 'id', bool $required = false): array
+    {
+        return array_merge(
+            explode('|', $this->intExistsUnlessRule($table, $column, $required)),
+            [new BackstageRoleMatchRule($backstage)]
+        );
     }
 
     /**

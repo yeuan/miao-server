@@ -31,11 +31,15 @@ class Permission
         $user = $request->user();
         $id = $user->id;
         $roleId = $user->role_id;
+        $tenant_id = $user->tenant_id;
+        $agent_id = $user->agent_id;
 
         // 設定全局參數
         $request->attributes->set(requestOutParamPrefix('backstage'), $backstageValue);
         $request->attributes->set(requestOutParamPrefix('id'), $id);
         $request->attributes->set(requestOutParamPrefix('role_id'), $roleId);
+        $request->attributes->set(requestOutParamPrefix('tenant_id'), $roleId);
+        $request->attributes->set(requestOutParamPrefix('agent_id'), $agent_id);
         $request->attributes->set(requestOutParamPrefix('username'), $user->username);
 
         // 取得導航列表

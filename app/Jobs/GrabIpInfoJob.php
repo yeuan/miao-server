@@ -20,17 +20,20 @@ class GrabIpInfoJob implements ShouldBeUnique, ShouldQueue
     public function __construct(
         protected string $type,
         protected int $id,
-        protected ?int $uniqueFor = null // 預設值為 null
-    ) {
-        $this->uniqueFor = config('custom.settings.queue.unique_lock_time', 300);
+    ) {}
+
+    /**
+     * 解除任務唯一鎖的秒數
+     */
+    public function uniqueFor(): int
+    {
+        return config('custom.settings.queue.unique_lock_time', 300);
     }
 
     /**
      * 任務的 unique ID (唯一ID)
-     *
-     * @return string
      */
-    public function uniqueId()
+    public function uniqueId(): string
     {
         return $this->type.'-'.$this->id;
     }
@@ -71,7 +74,7 @@ class GrabIpInfoJob implements ShouldBeUnique, ShouldQueue
             $ipInfo = [];
         }
 
-        $data['ip_info'] = json_decode($ipInfo ?? '[]', true);
+        $data['ip_info'] = is_array($ipInfo) ? $ipInfo : json_decode($ipInfo ?? '[]', true);
         // 儲存資料
         $data->save();
     }

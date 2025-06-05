@@ -25,6 +25,8 @@ class BannerService
                 'flag' => \App\Enums\Content\BannerFlag::toObject(),
                 'status' => \App\Enums\Status::toObject(),
                 'link_type' => \App\Enums\Content\BannerLinkType::toObject(),
+                'owner_type' => \App\Enums\Common\OwnerType::toObject(),
+                // 'owner' => $this->adminRoleRepository->getRoleList(true),
             ],
         ];
     }
