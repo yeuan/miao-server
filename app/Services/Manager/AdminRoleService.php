@@ -29,8 +29,6 @@ class AdminRoleService
 
     public function store(array $row): void
     {
-        // 過濾參數uploadSettingService
-        $row = filterRequest($row);
         $row['allow_nav'] = is_array($row['allow_nav']) ? $row['allow_nav'] : json_decode($row['allow_nav'], true);
         $this->adminRoleRepository->create($row);
     }
@@ -45,8 +43,6 @@ class AdminRoleService
 
     public function update(array $row, int $id): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $row['allow_nav'] = is_array($row['allow_nav']) ? $row['allow_nav'] : json_decode($row['allow_nav'], true);
         $this->adminRoleRepository->update($row, $id);
     }

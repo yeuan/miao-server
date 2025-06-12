@@ -42,10 +42,14 @@ Route::group(['prefix' => 'v1'], function () use ($provider) {
             Route::registerCrud('admin_nav');
         });
         // 模組
-        Route::adminGroup('modules', 'Manager\ModulesController', function () {
+        Route::adminGroup('modules', 'Manager\ModuleController', function () {
             Route::registerCrud('modules', ['index', 'update']);
             // 取得所有啟用中的模組
             Route::get('active', 'active')->name('modules.active');
+        });
+        // 標籤
+        Route::adminGroup('tags', 'Manager\TagController', function () {
+            Route::registerCrud('tags');
         });
 
         // 載入模組的路由
@@ -57,7 +61,7 @@ Route::group(['prefix' => 'v1'], function () use ($provider) {
             Route::registerCrud('upload_settings', ['index', 'show', 'update']);
         });
 
-        // 模組啟動驗證（CRUD功能外用）
+        // 模組啟動驗證（module關閉route就不會有，此處是針對CRUD功能外用）
         Route::middleware(['module.enabled'])->group(function () {
             /* -- 內容管理 -- */
 

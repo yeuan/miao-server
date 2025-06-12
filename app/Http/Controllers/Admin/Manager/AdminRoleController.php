@@ -40,7 +40,8 @@ class AdminRoleController extends Controller
     public function store(AdminRoleRequest $request)
     {
         try {
-            $this->adminRoleService->store($request->validated());
+            // 取得並過濾參數
+            $this->adminRoleService->store($request->filteredValidated());
 
             return respondSuccess();
         } catch (\Throwable $e) {
@@ -52,7 +53,8 @@ class AdminRoleController extends Controller
     {
         try {
             $id = $request->validated('id');
-            $this->adminRoleService->update($request->validated(), $id);
+            // 取得並過濾參數
+            $this->adminRoleService->update($request->filteredValidated(), $id);
 
             return respondSuccess();
         } catch (\Throwable $e) {

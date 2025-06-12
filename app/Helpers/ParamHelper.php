@@ -53,14 +53,29 @@ if (! function_exists('decodeSearchParams')) {
      */
     function decodeSearchParams(array $params): array
     {
+        $rangeFields = config('custom.settings.range_fields', []);
+
         return collect($params)
-            ->flatMap(fn ($value, $key) => is_array($value)
-                ? [
-                    "{$key}1" => $value[0] ?? null,
-                    "{$key}2" => $value[1] ?? null,
-                ]
-                : [$key => urldecode($value)]
+            ->flatMap(fn ($value, $key) => (in_array($key, $rangeFields, true) && is_array($value))
+                    ? [
+                        "{$key}1" => $value[0] ?? null,
+                        "{$key}2" => $value[1] ?? null,
+                    ]
+                    : [$key => is_string($value) ? urldecode($value) : $value]
             )
             ->toArray();
+    }
+}
+
+if (! function_exists('extractTagIds')) {
+
+    /**
+     * 取得標籤 id 陣列
+     */
+    function extractTagIds(array $params): array
+    {
+        $tagField = config('custom.settings.tags.fields', 'tag_ids');
+
+        return (array) ($params[$tagField] ?? []);
     }
 }

@@ -6,7 +6,7 @@ use App\Models\BaseModel;
 
 class AdminNav extends BaseModel
 {
-    protected $table = 'admin_nav';
+    protected $table = 'admin_navs';
 
     protected $guarded = ['id'];
 

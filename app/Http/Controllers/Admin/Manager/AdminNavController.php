@@ -40,7 +40,8 @@ class AdminNavController extends Controller
     public function store(AdminNavRequest $request)
     {
         try {
-            $this->adminNavService->store($request->validated());
+            // 取得並過濾參數
+            $this->adminNavService->store($request->filteredValidated());
 
             return respondSuccess();
         } catch (\Throwable $e) {
@@ -52,7 +53,8 @@ class AdminNavController extends Controller
     {
         try {
             $id = $request->validated('id');
-            $this->adminNavService->update($request->validated(), $id);
+            // 取得並過濾參數
+            $this->adminNavService->update($request->filteredValidated(), $id);
 
             return respondSuccess();
         } catch (\Throwable $e) {

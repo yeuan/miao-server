@@ -15,19 +15,27 @@ class ModulesSeeder extends Seeder
         $modules = [
             [
                 'id' => 1,
-                'namespace' => 'Content',
-                'code' => 'notice',
-                'name' => '公告',
-                'description' => '方便管理員發布重要消息或系統通知。',
+                'namespace' => 'Tenant',
+                'code' => 'tenant',
+                'name' => '廟宇管理（多租客）',
+                'description' => '多租客架構，目前用於廟宇資料的新增、查詢與管理。',
                 'sort' => 1,
             ],
             [
                 'id' => 2,
                 'namespace' => 'Content',
+                'code' => 'notice',
+                'name' => '公告',
+                'description' => '方便管理員發布重要消息或系統通知。',
+                'sort' => 2,
+            ],
+            [
+                'id' => 3,
+                'namespace' => 'Content',
                 'code' => 'banner',
                 'name' => '輪播圖',
                 'description' => '可展示多張圖片，適用於廣告、活動、重要訊息等視覺宣傳。',
-                'sort' => 2,
+                'sort' => 3,
             ],
         ];
 

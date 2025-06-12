@@ -8,5 +8,5 @@ class LogUpload extends BaseModel
 {
     protected $connection = 'log';
 
-    protected $table = 'log_upload';
+    protected $table = 'log_uploads';
 }

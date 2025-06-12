@@ -5,6 +5,10 @@ return [
         'out_parameters' => 'G_', // 要過濾掉的參數前綴（主要用來區別後台類型）
     ],
 
+    'range_fields' => [
+        'created_at', 'updated_at', 'publish_at', 'start_time', 'end_time', // 搜尋時需要分成兩個區間的欄位
+    ],
+
     // 驗證相關
     'verification' => [
         'use_admin_login_validate' => true,        // 是否使用後台登入驗證
@@ -24,6 +28,10 @@ return [
     // 緩存設定
     'cache' => [
         'ttl_time' => 86400, // 緩存時間(秒)
+    ],
+
+    'tags' => [
+        'fields' => 'tag_ids', // 標籤對應的表單欄位名稱
     ],
 
     // 隊列設定

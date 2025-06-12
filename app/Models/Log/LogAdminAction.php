@@ -12,9 +12,10 @@ class LogAdminAction extends BaseModel
 
     protected $connection = 'log';
 
-    protected $table = 'log_admin_action';
+    protected $table = 'log_admin_actions';
 
     protected $casts = [
         'info' => 'array',
+        'sql' => 'array',
     ];
 }

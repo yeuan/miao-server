@@ -12,4 +12,5 @@ return [
         \App\Observers\System\AttachUploadObserver::class,
         \App\Observers\Content\OwnerObserver::class,
     ],
+    'Manager\Taggable' => [\App\Observers\Manager\TaggableObserver::class],
 ];

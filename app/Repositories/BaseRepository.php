@@ -418,6 +418,12 @@ abstract class BaseRepository
         $create = $this->entity->create($data);
         $id = $create->getKey();
 
+        // 同步標籤
+        if ($this->hasTagField($data) && method_exists($create, 'tags')) {
+            $tagIds = extractTagIds($data);
+            $create->tags()->sync($tagIds);
+        }
+
         // 判斷是否需要寫入操作日誌
         if ($this->shouldLogAction()) {
             // 過濾欄位
@@ -450,7 +456,15 @@ abstract class BaseRepository
                 return;
             }
 
+            // 更新主資料
             $row->update($data);
+
+            // 同步標籤
+            if ($this->hasTagField($data) && method_exists($row, 'tags')) {
+                $tagIds = extractTagIds($data);
+                $row->tags()->sync($tagIds);
+            }
+
         }
         // 更新後刪除Redis快取
         $this->flushTableCache($this->entity->getTable());
@@ -521,6 +535,13 @@ abstract class BaseRepository
             // $this->reset();
         } else {
             $row = $this->db->findOrFail($id);
+
+            // 先 detach tags
+            if (method_exists($row, 'tags')) {
+                $row->tags()->detach();
+            }
+
+            // 再刪除主資料
             $row->delete();
         }
         // 更新後刪除Redis快取
@@ -562,7 +583,7 @@ abstract class BaseRepository
             'backstage' => requestOutParam('backstage', 0),
             'admin_id' => requestOutParam('id', 0),
             'route' => optional(\Route::current())->getName() ?? '',
-            'sql' => $this->lastQuery(),
+            'sql' => $this->getQuery(),
             'info' => $info,
             'ip' => getRealIp(),
             'status' => $status,
@@ -616,6 +637,16 @@ abstract class BaseRepository
     }
 
     /**
+     * 判斷是否有傳入標籤欄位資料
+     */
+    private function hasTagField(array $data): bool
+    {
+        $tagField = config('custom.settings.tags.fields', 'tag_ids');
+
+        return array_key_exists($tagField, $data) && ! is_null($data[$tagField]);
+    }
+
+    /**
      * 回傳最後一條 SQL 查詢語句
      */
     private function lastQuery(): string
@@ -630,6 +661,22 @@ abstract class BaseRepository
         $sql = str_replace('?', '%s', $last['query']);
 
         return vsprintf($sql, $last['bindings'] ?? []);
+    }
+
+    /**
+     * 取得 SQL 查詢語句
+     */
+    private function getQuery(): array
+    {
+        $queryLog = DB::getQueryLog();
+        $queries = [];
+
+        foreach ($queryLog as $item) {
+            $sql = str_replace('?', '%s', $item['query']);
+            $queries[] = vsprintf($sql, $item['bindings'] ?? []);
+        }
+
+        return $queries;
     }
 
     /**

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Content\NoticeRequest;
+use App\Http\Resources\Content\NoticeCollection;
+use App\Http\Resources\Content\NoticeResource;
 use App\Services\Content\NoticeService;
 
 class NoticeController extends Controller
@@ -20,7 +22,7 @@ class NoticeController extends Controller
                 'refer' => $refer,
             ] = $this->noticeService->list($request->validated());
 
-            return respondCollection($result, compact('refer'));
+            return respondCollection(NoticeCollection::make($result), compact('refer'));
         } catch (\Throwable $e) {
             return respondError('SYSTEM_FAILED', $e);
         }
@@ -31,7 +33,7 @@ class NoticeController extends Controller
         try {
             $id = $request->validated('id');
 
-            return respondSuccess($this->noticeService->show($id));
+            return respondSuccess(NoticeResource::make($this->noticeService->show($id)));
         } catch (\Throwable $e) {
             return respondError('SYSTEM_FAILED', $e);
         }
@@ -40,7 +42,8 @@ class NoticeController extends Controller
     public function store(NoticeRequest $request)
     {
         try {
-            $this->noticeService->store($request->validated());
+            // 取得並過濾參數
+            $this->noticeService->store($request->filteredValidated());
 
             return respondSuccess();
         } catch (\Throwable $e) {
@@ -52,7 +55,8 @@ class NoticeController extends Controller
     {
         try {
             $id = $request->validated('id');
-            $this->noticeService->update($request->validated(), $id);
+            // 取得並過濾參數
+            $this->noticeService->update($request->filteredValidated(), $id);
 
             return respondSuccess();
         } catch (\Throwable $e) {

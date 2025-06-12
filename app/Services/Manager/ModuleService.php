@@ -26,8 +26,6 @@ class ModuleService
 
     public function update(array $row, int $id): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->moduleRepository->update($row, $id);
     }
 

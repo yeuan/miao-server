@@ -9,6 +9,7 @@ use App\Enums\Status;
 use App\Http\Requests\BaseRequest;
 use App\Models\Content\Notice;
 use App\Models\Tenant\Tenant;
+use App\Repositories\Manager\TagRepository;
 
 class NoticeRequest extends BaseRequest
 {
@@ -16,11 +17,15 @@ class NoticeRequest extends BaseRequest
 
     private string $tableTenant;
 
+    private string $moduleCode;
+
     public function __construct()
     {
         parent::__construct();
 
-        $this->table = (new Notice)->getTable();
+        $model = new Notice;
+        $this->table = $model->getTable();
+        $this->moduleCode = getModuleCodeByModel(get_class($model));
         $this->tableTenant = (new Tenant)->getTable();
     }
 
@@ -45,6 +50,9 @@ class NoticeRequest extends BaseRequest
      */
     private function storeRules(): array
     {
+        $tagField = config('custom.settings.tags.fields', 'tag_ids');
+        $allowedTagIds = $this->getAllowedTagIds();
+
         return [
             'owner_type' => $this->stringInRule(OwnerType::values()),
             'owner_id' => $this->intRule().'|'.$this->requiredIfRule('owner_type', [OwnerType::TENANT->value]).'|'.$this->existsRule($this->tableTenant, 'id'),
@@ -52,6 +60,8 @@ class NoticeRequest extends BaseRequest
             'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
+            $tagField => $this->arrayRule(),
+            $tagField.'.*' => $this->intInRule($allowedTagIds),
             'flag' => $this->flagRule(NoticeFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
@@ -64,6 +74,9 @@ class NoticeRequest extends BaseRequest
      */
     private function updateRules(): array
     {
+        $tagField = config('custom.settings.tags.fields', 'tag_ids');
+        $allowedTagIds = $this->getAllowedTagIds();
+
         return [
             'id' => 'bail|'.$this->intRule(true),
             'owner_type' => $this->stringInRule(OwnerType::values(), true),
@@ -72,6 +85,8 @@ class NoticeRequest extends BaseRequest
             'title' => 'bail|'.$this->stringRule(config('custom.length.notice.title_max'), true),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
+            $tagField => $this->arrayRule(),
+            $tagField.'.*' => $this->intInRule($allowedTagIds),
             'flag' => $this->flagRule(NoticeFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
@@ -94,10 +109,15 @@ class NoticeRequest extends BaseRequest
      */
     private function indexRules(): array
     {
+        $tagField = config('custom.settings.tags.fields', 'tag_ids');
+        $allowedTagIds = $this->getAllowedTagIds();
+
         return [
             'owner_type' => $this->stringInRule(OwnerType::values()),
             'owner_id' => $this->intRule().'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(NoticeType::values()),
+            $tagField => $this->arrayRule(),
+            $tagField.'.*' => $this->intInRule($allowedTagIds),
             'flag' => $this->flagRule(NoticeFlag::values()),
             'status' => $this->enumRule(Status::values()),
             // 'enable' => $this->enumRule(Status::values()),
@@ -121,5 +141,14 @@ class NoticeRequest extends BaseRequest
         return [
             'id' => $this->intRule(true),
         ];
+    }
+
+    /**
+     * 共用取得該模組允許的標籤ID
+     */
+    private function getAllowedTagIds(): array
+    {
+        return app(TagRepository::class)
+            ->getModuleTagIds($this->moduleCode, Status::ENABLE->value) ?? [];
     }
 }

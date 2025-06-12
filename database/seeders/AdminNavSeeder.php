@@ -64,6 +64,17 @@ class AdminNavSeeder extends Seeder
                         ['name' => '修改',  'route' => 'modules.update',  'flag' => $allowBackstage | $final],
                     ],
                 ],
+                [
+                    'name' => '標籤管理',
+                    'route' => 'tags.index',
+                    'flag' => $allowBackstage | $final,
+                    'children' => [
+                        ['name' => '詳情',  'route' => 'tags.show',   'flag' => $allowBackstage | $final],
+                        ['name' => '新增',  'route' => 'tags.store',   'flag' => $allowBackstage | $final],
+                        ['name' => '修改',  'route' => 'tags.update',  'flag' => $allowBackstage | $final],
+                        ['name' => '刪除',  'route' => 'tags.destroy', 'flag' => $allowBackstage | $final],
+                    ],
+                ],
             ],
             '內容管理' => [
                 [

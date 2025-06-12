@@ -67,4 +67,12 @@ abstract class BaseRequest extends FormRequest
 
         return self::$schemaCache[$table];
     }
+
+    /**
+     * 取得驗證後且過濾全局的欄位資料
+     */
+    public function filteredValidated(): array
+    {
+        return filterRequest($this->validated());
+    }
 }

@@ -16,8 +16,6 @@ class ErrorMapper
 {
     public static function render(\Throwable $e, ?Request $request = null)
     {
-        dd($e);
-
         return match (true) {
             $e instanceof NotFoundHttpException,
             $e instanceof MethodNotAllowedHttpException,

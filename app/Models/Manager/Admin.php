@@ -11,7 +11,7 @@ class Admin extends Authenticatable implements JWTSubject
 {
     use ModelTrait;
 
-    protected $table = 'admin';
+    protected $table = 'admins';
 
     protected $dateFormat = 'U';
 

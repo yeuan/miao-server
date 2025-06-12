@@ -33,3 +33,15 @@ if (! function_exists('getRelatedTableByModuleCode')) {
         return null;
     }
 }
+
+if (! function_exists('getModuleCodeByModel')) {
+    /**
+     * 由 Model::class 反查 module_code
+     */
+    function getModuleCodeByModel(string $modelClass): ?string
+    {
+        $moduleMap = config('module_map');
+
+        return array_search($modelClass, $moduleMap, true) ?: null;
+    }
+}

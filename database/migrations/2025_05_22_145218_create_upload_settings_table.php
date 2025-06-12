@@ -36,6 +36,7 @@ return new class extends Migration
             // 索引
             $table->index(['type', 'module_code', 'status'], 'type_module_status_index');
             $table->index(['status', 'sort'], 'status_sort_index');
+            $table->index(['type', 'status', 'sort'], 'type_status_sort_index');
         });
 
         DB::statement("ALTER TABLE `$this->tableName` comment '上傳設置'");

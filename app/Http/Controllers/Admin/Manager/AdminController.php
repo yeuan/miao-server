@@ -42,7 +42,8 @@ class AdminController extends Controller
     public function store(AdminRequest $request)
     {
         try {
-            $this->adminService->store($request->validated());
+            // 取得並過濾參數
+            $this->adminService->store($request->filteredValidated());
 
             return respondSuccess();
         } catch (\Throwable $e) {
@@ -54,7 +55,8 @@ class AdminController extends Controller
     {
         try {
             $id = $request->validated('id');
-            $this->adminService->update($request->validated(), $id);
+            // 取得並過濾參數
+            $this->adminService->update($request->filteredValidated(), $id);
 
             return respondSuccess();
         } catch (\Throwable $e) {

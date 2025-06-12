@@ -4,6 +4,9 @@ return [
     'pagination' => [
         'per_page_max' => 1000,
     ],
+    'color' => [
+        'max' => 6,
+    ],
     'admin_role' => [
         'name_max' => 50,
     ],
@@ -21,6 +24,9 @@ return [
         'url_max' => 255,
     ],
     'modules' => [
+        'name_max' => 50,
+    ],
+    'tag' => [
         'name_max' => 50,
     ],
     'notice' => [

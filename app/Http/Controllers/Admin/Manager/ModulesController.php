@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Manager\ModuleRequest;
 use App\Services\Manager\ModuleService;
 
-class ModulesController extends Controller
+class ModuleController extends Controller
 {
     public function __construct(
         protected ModuleService $moduleService

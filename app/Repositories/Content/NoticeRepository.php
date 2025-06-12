@@ -48,6 +48,16 @@ class NoticeRepository extends BaseRepository
         $query = $query->where($conditions);
 
         // 附加其他條件（使用原生或特殊條件）
+        $tagField = config('custom.settings.tags.fields', 'tag_ids');
+        if (isset($this->_search[$tagField])) {
+            $tagIds = $this->_search[$tagField];
+            if (! empty($tagIds)) {
+                $query->whereHas('tags', function ($q) use ($tagIds) {
+                    $q->whereIn('tags.id', $tagIds);
+                });
+            }
+        }
+
         if (isset($this->_search['flag'])) {
             $query->whereRaw('flag & ? > 0', [$this->_search['flag']]);
         }

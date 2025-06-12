@@ -6,7 +6,7 @@ use App\Models\BaseModel;
 
 class AdminRole extends BaseModel
 {
-    protected $table = 'admin_role';
+    protected $table = 'admin_roles';
 
     protected $guarded = ['id'];
 

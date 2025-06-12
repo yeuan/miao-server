@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Rules\BackstageRoleMatchRule;
 use App\Rules\SortByRule;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 trait RequestRulesTrait
@@ -22,6 +23,14 @@ trait RequestRulesTrait
     protected function intWithMaxRule(int $max = 1000, bool $required = false): string
     {
         return $this->intRule($required)."|max:{$max}";
+    }
+
+    /**
+     * 驗證整數欄位內容是否存在於允許清單中（integer + in 檢查）
+     */
+    protected function intInRule(array $allowed, bool $required = false): string
+    {
+        return $this->intRule($required).'|in:'.implode(',', $allowed);
     }
 
     /**
@@ -93,6 +102,20 @@ trait RequestRulesTrait
         }
 
         return $rule;
+    }
+
+    protected function uniqueComboRule(string $table, array $whereColumns, ?string $ignoreId = null): array
+    {
+        $rule = Rule::unique($table);
+
+        foreach ($whereColumns as $col => $val) {
+            $rule = $rule->where($col, $val);
+        }
+        if ($ignoreId) {
+            $rule = $rule->ignore($ignoreId);
+        }
+
+        return [$rule];
     }
 
     /**
@@ -202,10 +225,10 @@ trait RequestRulesTrait
      */
     protected function backstageRoleRule(int $backstage, string $table, string $column = 'id', bool $required = false): array
     {
-        return array_merge(
-            explode('|', $this->intExistsUnlessRule($table, $column, $required)),
-            [new BackstageRoleMatchRule($backstage)]
-        );
+        return [
+            ...explode('|', $this->intExistsUnlessRule($table, $column, $required)),
+            ...[new BackstageRoleMatchRule($backstage)],
+        ];
     }
 
     /**

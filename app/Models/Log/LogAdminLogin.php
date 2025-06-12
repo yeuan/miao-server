@@ -12,7 +12,7 @@ class LogAdminLogin extends BaseModel
 
     protected $connection = 'log';
 
-    protected $table = 'log_admin_login';
+    protected $table = 'log_admin_logins';
 
     protected $attributes = [
         'ip_info' => '{}',

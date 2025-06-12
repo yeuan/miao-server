@@ -14,7 +14,7 @@ class LogAdminApi extends BaseModel
 
     protected $connection = 'log';
 
-    protected $table = 'log_admin_api';
+    protected $table = 'log_admin_apis';
 
     protected $casts = [
         'params' => 'array',

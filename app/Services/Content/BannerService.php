@@ -15,6 +15,7 @@ class BannerService
         ['order' => $order, 'search' => $search] = paramProcess($input, 'id');
 
         $result = $this->bannerRepository->search($search)
+            ->relation(['tags'])
             ->order($order)->paginate($input['per_page'] ?? config('custom.default.per_page'))
             ->result();
 
@@ -26,15 +27,12 @@ class BannerService
                 'status' => \App\Enums\Status::toObject(),
                 'link_type' => \App\Enums\Content\BannerLinkType::toObject(),
                 'owner_type' => \App\Enums\Common\OwnerType::toObject(),
-                // 'owner' => $this->adminRoleRepository->getRoleList(true),
             ],
         ];
     }
 
     public function store(array $row): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->bannerRepository->create($row);
     }
 
@@ -43,13 +41,11 @@ class BannerService
         // id 為 0 時代表取得空白表單範本資料
         return $id == 0 ?
         $this->bannerRepository->getEntity() :
-        $this->bannerRepository->row($id);
+        $this->bannerRepository->relation(['tags'])->row($id);
     }
 
     public function update(array $row, int $id): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->bannerRepository->update($row, $id);
     }
 

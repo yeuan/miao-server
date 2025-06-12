@@ -33,8 +33,6 @@ class AdminService
 
     public function store(array $row): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->adminRepository->create($row);
     }
 
@@ -48,8 +46,6 @@ class AdminService
 
     public function update(array $row, int $id): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->adminRepository->update($row, $id);
     }
 

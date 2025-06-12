@@ -36,8 +36,6 @@ class UploadSettingService
 
     public function update(array $row, int $id): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->uploadSettingRepository->update($row, $id);
     }
 }

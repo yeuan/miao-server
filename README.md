@@ -170,6 +170,49 @@ enum UserStatus: string
 
 ---
 
+## 命名規範總覽
+
+### 資源命名規則總表
+
+| 類型       | 檔名/Class 名                   | 命名規則        |
+| ---------- | ------------------------------- | --------------- |
+| Model      | 資源名稱（單數）                | **單數**        |
+| Controller | 資源名稱（單數）+Controller     | **單數**        |
+| Request    | 資源名稱（單數）+Request        | **單數**        |
+| Service    | 資源名稱（單數）+Service        | **單數**        |
+| Repository | 資源名稱（單數）+Repository     | **單數**        |
+| Table Name | 資源名稱（複數，底線式）        | **複數**        |
+| Route URI  | /資源名稱（複數，中橫線式）     | **複數/中橫線** |
+| Route name | 資源名稱（複數，底線式）.index  | **底線、複數**  |
+| Route 參數 | 資源名稱（單數）                | **單數**        |
+| Migration  | Create + 資源名稱（複數）+Table | **複數**        |
+
+#### 範例（以 user 為例）
+
+-   Model：`User`
+-   Controller：`UserController`
+-   Request：`UserRequest`
+-   Service：`UserService`
+-   Repository：`UserRepository`
+-   Table：`users`
+-   Route URI：`/users`
+-   Route Name: `users.index`
+-   Route 參數: `/users/{user}`
+-   Migration: `CreateUsersTable`
+
+> **備註**：命名規則請依據實際資源名稱（英文單/複數轉換）使用，避免混用固定詞。
+
+---
+
+### 命名規則說明
+
+-   **Model、Controller、Request、Service、Repository、Route 參數**：皆為單數，對應單一資源物件。
+-   **Route Name、Route URI、Migration**：用複數，對應一組資源集合（RESTful 標準）。
+-   **Table Name**：資料表用複數（底線式，snake_case），與 Eloquent 映射一致。
+-   **Route URI**：URL 路徑用複數，中橫線式（kebab-case），RESTful API 慣例。
+
+---
+
 ### ❌ 不可用於 Service 的 Helper 函式
 
 #### HttpHelpers.php

@@ -29,8 +29,6 @@ class AdminNavService
 
     public function store(array $row): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->adminNavRepository->create($row);
     }
 
@@ -47,8 +45,6 @@ class AdminNavService
 
     public function update(array $row, int $id): void
     {
-        // 過濾參數
-        $row = filterRequest($row);
         $this->adminNavRepository->update($row, $id);
     }
 
