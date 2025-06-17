@@ -38,4 +38,8 @@ enum ApiCode: int
     case AUTH_JWT_INVALID = 40123;
     case AUTH_JWT_EXPIRED = 40124;
     case AUTH_BACKSTAGE_ERROR = 40125;
+
+    // 刪除限制
+    case HAS_CHILDREN_DATA = 40131;
+    case HAS_ARTICLES_DATA = 40132;
 }

@@ -7,21 +7,16 @@ use App\Enums\Content\BannerFlag;
 use App\Enums\Content\BannerLinkType;
 use App\Enums\Content\BannerType;
 use App\Enums\Status;
-use App\Http\Requests\BaseRequest;
 use App\Models\Content\Banner;
 use App\Models\Log\LogUpload;
-use App\Models\Tenant\Tenant;
-use App\Repositories\Manager\TagRepository;
 
-class BannerRequest extends BaseRequest
+class BannerRequest extends ContentRequest
 {
     private string $table;
 
     private string $tableLog;
 
-    private string $tableTenant;
-
-    private string $moduleCode;
+    protected ?string $moduleCode;
 
     public function __construct()
     {
@@ -30,7 +25,6 @@ class BannerRequest extends BaseRequest
         $model = new Banner;
         $this->table = $model->getTable();
         $this->moduleCode = getModuleCodeByModel(get_class($model));
-        $this->tableTenant = (new Tenant)->getTable();
 
         $logModel = new LogUpload;
         $connection = $logModel->getConnectionName();
@@ -38,27 +32,10 @@ class BannerRequest extends BaseRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return match ($this->method()) {
-            'POST' => $this->storeRules(),
-            'PUT' => $this->updateRules(),
-            'GET' => $this->route('id') ? $this->showRules() : $this->indexRules(),
-            'DELETE' => $this->deleteRules(),
-            default => [],
-        };
-    }
-
-    /**
      * 建立 POST 驗證規則Tenant
      */
-    private function storeRules(): array
+    protected function storeRules(): array
     {
-        $tagField = config('custom.settings.tags.fields', 'tag_ids');
         $allowedTagIds = $this->getAllowedTagIds();
 
         return [
@@ -77,8 +54,8 @@ class BannerRequest extends BaseRequest
             'object_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value, BannerLinkType::GAME->value]),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
-            $tagField => $this->arrayRule(),
-            $tagField.'.*' => $this->intInRule($allowedTagIds),
+            $this->tagField => $this->arrayRule(),
+            $this->tagField.'.*' => $this->intInRule($allowedTagIds),
             'flag' => $this->flagRule(BannerFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
@@ -88,9 +65,8 @@ class BannerRequest extends BaseRequest
     /**
      * 更新 PUT 驗證規則
      */
-    private function updateRules(): array
+    protected function updateRules(): array
     {
-        $tagField = config('custom.settings.tags.fields', 'tag_ids');
         $allowedTagIds = $this->getAllowedTagIds();
 
         return [
@@ -110,8 +86,8 @@ class BannerRequest extends BaseRequest
             'object_id' => $this->intRule().'|'.$this->requiredIfRule('link_type', [BannerLinkType::MODULE->value, BannerLinkType::GAME->value]),
             'start_time' => $this->dateRule(),
             'end_time' => $this->endDateRule('start_time'),
-            $tagField => $this->arrayRule(),
-            $tagField.'.*' => $this->intInRule($allowedTagIds),
+            $this->tagField => $this->arrayRule(),
+            $this->tagField.'.*' => $this->intInRule($allowedTagIds),
             'flag' => $this->flagRule(BannerFlag::names()),
             'sort' => $this->intRule(),
             'status' => $this->enumRule(Status::values()),
@@ -119,29 +95,18 @@ class BannerRequest extends BaseRequest
     }
 
     /**
-     * 顯示單筆 GET 驗證規則
-     */
-    private function showRules(): array
-    {
-        return [
-            'id' => $this->intRule(true),
-        ];
-    }
-
-    /**
      * 查詢列表 GET 驗證規則
      */
-    private function indexRules(): array
+    protected function indexRules(): array
     {
-        $tagField = config('custom.settings.tags.fields', 'tag_ids');
         $allowedTagIds = $this->getAllowedTagIds();
 
         return [
             'owner_type' => $this->stringInRule(OwnerType::values()),
             'owner_id' => $this->intRule().'|'.$this->existsRule($this->tableTenant, 'id'),
             'type' => $this->enumRule(BannerType::values()),
-            $tagField => $this->arrayRule(),
-            $tagField.'.*' => $this->intInRule($allowedTagIds),
+            $this->tagField => $this->arrayRule(),
+            $this->tagField.'.*' => $this->intInRule($allowedTagIds),
             'flag' => $this->enumRule(BannerFlag::values()),
             'status' => $this->enumRule(Status::values()),
             // 'enable' => $this->enumRule(Status::values()),
@@ -155,24 +120,5 @@ class BannerRequest extends BaseRequest
             'publish_at_1' => $this->dateRule(),
             'publish_at_2' => $this->endDateRule('publish_at_1'),
         ];
-    }
-
-    /**
-     * 刪除 DELETE 驗證規則
-     */
-    private function deleteRules(): array
-    {
-        return [
-            'id' => $this->intRule(true),
-        ];
-    }
-
-    /**
-     * 共用取得該模組允許的標籤ID
-     */
-    private function getAllowedTagIds(): array
-    {
-        return app(TagRepository::class)
-            ->getModuleTagIds($this->moduleCode, Status::ENABLE->value) ?? [];
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('owner_type', 20)->default('platform')->comment('資料歸屬類型：platform/tenant');
             $table->unsignedBigInteger('owner_id')->default(0)->comment('資料歸屬 ID');
+            $table->string('slug', 100)->comment('網址代稱');
             $table->unsignedTinyInteger('type')->default(1)->comment('公告類型');
             $table->string('title', 50)->comment('公告標題');
             $table->text('content')->comment('公告內容');
@@ -36,6 +37,7 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_at')->default(0)->comment('更新時間');
 
             // 索引
+            $table->unique(['owner_type', 'owner_id', 'slug'], 'owner_slug_unique');
             $table->index(['type', 'status'], 'type_status_index');
             $table->index(['type', 'status', 'flag'], 'type_status_flag_index');
             $table->index(['type', 'status', 'start_time', 'end_time'], 'type_status_time_index');

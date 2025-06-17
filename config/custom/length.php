@@ -31,11 +31,53 @@ return [
     ],
     'notice' => [
         'title_max' => 50,
+        'slug_max' => 100,
     ],
     'banner' => [
         'image_max' => 255,
         'image_app_max' => 255,
         'url_max' => 255,
+    ],
+    'page' => [
+        'title_max' => 50,
+        'slug_max' => 100,
+        'summary_max' => 255,
+    ],
+    'article_category' => [
+        'name_max' => 50,
+        'slug_max' => 100,
+        'path_max' => 200,
+    ],
+    'article' => [
+        'title_max' => 50,
+        'slug_max' => 100,
+        'summary_max' => 255,
+        'cover_max' => 255,
+        'cover_app_max' => 255,
+    ],
+    'news_category' => [
+        'name_max' => 50,
+        'slug_max' => 100,
+        'path_max' => 200,
+    ],
+    'news' => [
+        'title_max' => 50,
+        'slug_max' => 100,
+        'summary_max' => 255,
+        'cover_max' => 255,
+        'cover_app_max' => 255,
+    ],
+    'faq_category' => [
+        'name_max' => 50,
+        'slug_max' => 100,
+        'path_max' => 200,
+    ],
+    'faq' => [
+        'question_max' => 255,
+        'slug_max' => 100,
+        'summary_max' => 255,
+        'cover_max' => 255,
+        'cover_app_max' => 255,
     ],
     'upload' => [
         'related_field_max' => 50,

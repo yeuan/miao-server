@@ -6,9 +6,12 @@ use App\Enums\Manager\AdminNavFlag;
 use App\Enums\Status;
 use App\Models\Manager\AdminNav;
 use App\Repositories\BaseRepository;
+use App\Traits\TreeTrait;
 
 class AdminNavRepository extends BaseRepository
 {
+    use TreeTrait;
+
     public function __construct(AdminNav $entity)
     {
         parent::__construct($entity);
@@ -16,14 +19,15 @@ class AdminNavRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $data = $this->_preAction($data);
+        $data['path'] = $this->buildPath($data['pid'] ?? 0, $this->entity);
 
         return parent::create($data);
     }
 
     public function update(array $row, int $id = 0): void
     {
-        $row = $this->_preAction($row);
+        $row['path'] = $this->buildPath($row['pid'] ?? 0, $this->entity);
+
         parent::update($row, $id);
     }
 
@@ -144,25 +148,5 @@ class AdminNavRepository extends BaseRepository
             })
             ->values()
             ->all();
-    }
-
-    private function _preAction(array $data): array
-    {
-        if (empty($data['pid'])) {
-            // 如果 pid 未設定或為 0，直接設定 path 為 0
-            $data['path'] = '0';
-
-            return $data;
-        }
-
-        // 使用 pluck 提取父節點的 path，減少查詢負擔
-        $parentPath = $this->entity->where('id', $data['pid'])->value('path');
-
-        // 設定 path，並確保格式正確
-        $data['path'] = $parentPath !== null
-        ? "{$parentPath},{$data['pid']}"
-        : (string) $data['pid'];
-
-        return $data;
     }
 }

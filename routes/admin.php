@@ -64,7 +64,15 @@ Route::group(['prefix' => 'v1'], function () use ($provider) {
         // 模組啟動驗證（module關閉route就不會有，此處是針對CRUD功能外用）
         Route::middleware(['module.enabled'])->group(function () {
             /* -- 內容管理 -- */
-
+            Route::adminGroup('article/category', 'Content\ArticleCategoryController', function () {
+                Route::registerCrud('article_category');
+            });
+            Route::adminGroup('news/category', 'Content\NewsCategoryController', function () {
+                Route::registerCrud('news_category');
+            });
+            Route::adminGroup('faq/category', 'Content\FaqCategoryController', function () {
+                Route::registerCrud('faq_category');
+            });
         });
 
     });

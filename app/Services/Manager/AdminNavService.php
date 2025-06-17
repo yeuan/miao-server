@@ -2,6 +2,8 @@
 
 namespace App\Services\Manager;
 
+use App\Enums\ApiCode;
+use App\Exceptions\Api\ApiException;
 use App\Repositories\Manager\AdminNavRepository;
 
 class AdminNavService
@@ -50,6 +52,11 @@ class AdminNavService
 
     public function destroy(int $id): void
     {
+        // 防呆：有子分類不可刪
+        if ($this->adminNavRepository->whereExists(['pid' => $id])) {
+            throw new ApiException(ApiCode::HAS_CHILDREN_DATA->name);
+        }
+
         $this->adminNavRepository->delete($id);
     }
 

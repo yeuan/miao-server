@@ -85,7 +85,7 @@ class TagRequest extends BaseRequest
             'name' => [
                 'bail',
                 ...explode('|', $this->stringRule(config('custom.length.tag.name_max'), true)),
-                ...$this->uniqueComboRule($this->table, ['module_code' => $moduleCode, 'owner_type' => $ownerType, 'owner_id' => $ownerId]),
+                ...$this->uniqueComboRule($this->table, ['module_code' => $moduleCode, 'owner_type' => $ownerType, 'owner_id' => $ownerId], $id),
             ],
             'module_code' => $this->stringInRule($allowedModules, true),
             'owner_type' => $this->stringInRule(OwnerType::values(), true),

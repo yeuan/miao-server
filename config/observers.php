@@ -12,5 +12,20 @@ return [
         \App\Observers\System\AttachUploadObserver::class,
         \App\Observers\Content\OwnerObserver::class,
     ],
+    'Content\Page' => [\App\Observers\Content\OwnerObserver::class],
+    'Content\Article' => [
+        \App\Observers\Content\ArticleObserver::class,
+        \App\Observers\Content\OwnerObserver::class,
+        \App\Observers\System\AttachUploadObserver::class,
+    ],
+    'Content\News' => [
+        \App\Observers\Content\NewsObserver::class,
+        \App\Observers\Content\OwnerObserver::class,
+        \App\Observers\System\AttachUploadObserver::class,
+    ],
+    'Content\Faq' => [
+        \App\Observers\Content\FaqObserver::class,
+        \App\Observers\Content\OwnerObserver::class,
+    ],
     'Manager\Taggable' => [\App\Observers\Manager\TaggableObserver::class],
 ];

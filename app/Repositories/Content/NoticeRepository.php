@@ -26,6 +26,9 @@ class NoticeRepository extends BaseRepository
         if (isset($this->_search['owner_id'])) {
             $conditions[] = ['owner_id', '=', $this->_search['owner_id']];
         }
+        if (isset($this->_search['slug'])) {
+            $conditions[] = ['slug', '=', $this->_search['slug']];
+        }
         if (isset($this->_search['type'])) {
             $conditions[] = ['type', '=', $this->_search['type']];
         }

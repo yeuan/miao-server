@@ -8,6 +8,7 @@ use App\Enums\Common\OwnerType;
 use App\Enums\Content\BannerFlag;
 use App\Enums\Content\BannerLinkType;
 use App\Enums\Content\BannerType;
+use App\Enums\Content\ContentFlag;
 use App\Enums\Content\NoticeFlag;
 use App\Enums\Content\NoticeType;
 use App\Enums\HttpStatus;
@@ -44,6 +45,9 @@ return [
         'AUTH_JWT_INVALID' => '登入Token失效',
         'AUTH_JWT_EXPIRED' => '登入Token過期',
         'AUTH_BACKSTAGE_ERROR' => '後台類型不符',
+
+        'HAS_CHILDREN_DATA' => '有子分類不可刪除',
+        'HAS_ARTICLES_DATA' => '使用中不可刪除',
     ],
 
     HttpStatus::class => [
@@ -152,5 +156,16 @@ return [
     BannerFlag::class => [
         'TOP' => '輪播優先',
         'APP_ONLY' => '只在 App 顯示',
+    ],
+
+    // 內容
+    ContentFlag::class => [
+        'TOP' => '置頂',
+        'FEATURED' => '精選',
+        'RECOMMENDED' => '推薦',
+        'HOT' => '熱門',
+        'HOMEPAGE' => '首頁顯示',
+        'MEMBER' => '僅會員可見',
+        'APP_ONLY' => 'APP專用',
     ],
 ];

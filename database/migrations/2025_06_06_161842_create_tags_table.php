@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('owner_type', 20)->default('platform')->comment('資料歸屬類型：platform/tenant');
             $table->unsignedBigInteger('owner_id')->default(0)->comment('資料歸屬 ID');
             $table->string('color', 20)->nullable()->comment('顏色');
-            $table->unsignedInteger('used_count')->default(0)->comment('標籤被引用次數');
+            $table->unsignedBigInteger('used_count')->default(0)->comment('引用次數');
             $table->unsignedSmallInteger('sort')->default(0)->comment('排序');
             $table->unsignedTinyInteger('status')->default(1)->comment('狀態 0:關閉 1:開啟');
             $table->string('created_by', 50)->default('')->comment('新增者');

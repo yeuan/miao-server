@@ -554,6 +554,20 @@ abstract class BaseRepository
     }
 
     /**
+     * 判斷資料是否存在
+     */
+    public function whereExists(array $where): bool
+    {
+        $this->where($where)->_doAction();
+
+        $bool = $this->db->exists();
+
+        $this->reset();
+
+        return $bool;
+    }
+
+    /**
      * 判斷是否啟用操作日誌功能
      */
     private function shouldLogAction(): bool

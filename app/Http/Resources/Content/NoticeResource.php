@@ -13,6 +13,7 @@ class NoticeResource extends SuccessResource
             'id' => $this->id,
             'owner_type' => $this->owner_type,
             'owner_id' => $this->owner_id,
+            'slug' => $this->slug,
             'type' => $this->type,
             'title' => $this->title,
             'content' => $this->content,
